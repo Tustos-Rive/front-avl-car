@@ -1,10 +1,3 @@
-export default class Node {
-  /** @type {Node} */
-  parent;
-  /** @type {Node} */
-  left;
-  /** @type {Node} */
-  right;
-  /** @type {String} */
-  value;
-}
+import NodeI from '../interfaces/Node.interface.mjs';
+
+export default class Node extends NodeI {}

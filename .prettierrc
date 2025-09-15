@@ -2,5 +2,6 @@
   "printWidth": 350,
   "semi": true,
   "singleQuote": true,
-  "objectWrap": "collapse"
+  "objectWrap": "collapse",
+  "tabWidth": 4
 }
