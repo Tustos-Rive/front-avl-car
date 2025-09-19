@@ -1,38 +1,74 @@
-import startMenu from '../../components/menus/start.menu.mjs';
+import * as Popper from '../../utils/popper/popper.min.js';
+import * as bootstrap from '../../utils/bootstrap/js/bootstrap.bundle.min.js';
+import Helpers from '../../utils/carlos-cuesta/helpers.js';
+import Toast from '../../utils/carlos-cuesta/toast.js';
+import icons from '../../utils/carlos-cuesta/icons.js';
+
+import TreeRender from '../../components/tree/TreeRender.mjs';
+import RoadController from '../../controllers/Road.controller.js';
+import AVL from '../../models/AVL.model.mjs';
+import SocketService from '../../services/Socket.service.js';
+import CarController from '../../controllers/Car.controller.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  runMain();
+    // runMain();
+
+    App.init();
 });
 
-function runMain() {
-  const menu1Container = document.querySelector('#menu1');
-  const btnShow = document.querySelector('#btn1');
-  const btnHide = document.querySelector('#btn2');
+class App {
+    static async init() {
+        window.Helpers = Helpers;
+        window.icons = icons;
+        window.Popper = Popper;
+        window.Toast = Toast;
 
-  btnShow.addEventListener('click', () => {
-    showMenuStart(menu1Container);
-  });
+        // Test load road...
+        const roadCtrl = new RoadController();
+        const carCtrl = new CarController();
 
-  btnHide.addEventListener('click', () => {
-    hideMenu('#menu1');
-  });
+        await roadCtrl.init();
+        await carCtrl.init();
+    }
 }
 
-function showMenuStart(container) {
-  // Simulate that contains a header-buttons component
-  const testHtml = `<div id="btn-group-1">
-            <button type="button" class="btn btn-primary">Play</button>
-            <button type="button" class="btn btn-secondary">Add Obstacle</button>
-            <button type="button" class="btn btn-success">Modify Velocity and distance</button>
-            <button type="button" class="btn btn-info">About</button>
-        </div>`;
+// Tests Socket
+// let data = {};
+// let socketMain;
 
-  const htmlStartMenu = startMenu('Menu Start', 'Start AVL', testHtml);
+// function runMain() {
+//     const element1 = document.querySelector('#tree-render');
+//     const btnShow = document.querySelector('#btn1');
+//     const btnHide = document.querySelector('#btn2');
 
-  container.innerHTML = htmlStartMenu;
-}
+//     btnShow.addEventListener('click', () => {
+//         showE(element1);
+//     });
 
-function hideMenu(selector) {
-  const ctn = document.querySelector(`${selector}`);
-  ctn.innerHTML = '';
-}
+//     btnHide.addEventListener('click', () => {
+//         hideE('#tree-render');
+//     });
+// }
+
+// function showE(container) {
+//     // Testing AVL, socket and others
+
+//     // let data = {};
+//     // const socketMain = new SocketService('#ws-connection', data);
+
+//     socketMain = new SocketService('#ws-connection', data);
+//     const html = TreeRender();
+
+//     // Insert html inside index.html, before error
+//     container.innerHTML = html;
+
+//     const avlTree = new AVL('#tree-svg');
+// }
+
+// function hideE(selector) {
+//     // Send close connection
+//     socketMain = null;
+
+//     const ctn = document.querySelector(`${selector}`);
+//     ctn.innerHTML = '';
+// }

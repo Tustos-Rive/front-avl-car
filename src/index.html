@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AVL Tree Car Game</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AVL Tree Car Game</title>
 
-    <!-- Self resources -->
-    <link rel="stylesheet" href="./app/assets/css/main.css" />
-    <script defer type="module" src="./app/assets/js/main.mjs"></script>
+        <!-- Self resources -->
+        <link rel="stylesheet" href="./app/assets/css/main.css" />
+        <script defer type="module" src="./app/assets/js/main.mjs"></script>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="./app/utils/bootstrap/vapor/bootstrap.min.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <header class="header text-center"><h1>AVL Tree Car Game - Project 1</h1></header>
+        <!-- Bootstrap -->
+        <script defer src="./app/utils/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <main>
-      <button id="btn1" class="btn btn-primary">Show Menu</button>
-      <button id="btn2" class="btn btn-primary">Hide Menu</button>
-      <div id="menu1"></div>
-    </main>
-  </body>
+        <!-- D3.js -->
+        <script defer src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+    <body class="d-flex flex-column vh-75 bg-dark" data-bs-theme="dark">
+        <header class="header text-center"><h1>AVL Tree Car Game - Project 1</h1></header>
+
+        <main>
+            <p id="ws-connection">Offline</p>
+            <!-- Tests -->
+            <button id="btn1" class="btn btn-primary">Show Menu</button>
+            <button id="btn2" class="btn btn-primary">Hide Menu</button>
+            <div id="menu1"></div>
+
+            <!-- Think keep -->
+            <div id="road-game"></div>
+            <div class="no-scroolbars" id="tree-wrap">
+                <div class="no-scroolbars" id="tree-render"></div>
+            </div>
+        </main>
+    </body>
 </html>
