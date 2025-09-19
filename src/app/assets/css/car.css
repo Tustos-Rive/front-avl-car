@@ -1,0 +1,11 @@
+.car-ctn > svg {
+    width: 300px;
+}
+
+.car-ctn {
+    display: inline-block;
+    position: absolute;
+    top: 100px !important;
+    left: 50px;
+    /* margin-top: -110px; */
+}

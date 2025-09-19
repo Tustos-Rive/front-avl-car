@@ -1,47 +1,74 @@
+import * as Popper from '../../utils/popper/popper.min.js';
+import * as bootstrap from '../../utils/bootstrap/js/bootstrap.bundle.min.js';
+import Helpers from '../../utils/carlos-cuesta/helpers.js';
+import Toast from '../../utils/carlos-cuesta/toast.js';
+import icons from '../../utils/carlos-cuesta/icons.js';
+
 import TreeRender from '../../components/tree/TreeRender.mjs';
+import RoadController from '../../controllers/Road.controller.js';
 import AVL from '../../models/AVL.model.mjs';
 import SocketService from '../../services/Socket.service.js';
+import CarController from '../../controllers/Car.controller.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    runMain();
+    // runMain();
+
+    App.init();
 });
 
-let data = {};
-let socketMain;
+class App {
+    static async init() {
+        window.Helpers = Helpers;
+        window.icons = icons;
+        window.Popper = Popper;
+        window.Toast = Toast;
 
-function runMain() {
-    const element1 = document.querySelector('#tree-render');
-    const btnShow = document.querySelector('#btn1');
-    const btnHide = document.querySelector('#btn2');
+        // Test load road...
+        const roadCtrl = new RoadController();
+        const carCtrl = new CarController();
 
-    btnShow.addEventListener('click', () => {
-        showE(element1);
-    });
-
-    btnHide.addEventListener('click', () => {
-        hideE('#tree-render');
-    });
+        await roadCtrl.init();
+        await carCtrl.init();
+    }
 }
 
-function showE(container) {
-    // Testing AVL, socket and others
+// Tests Socket
+// let data = {};
+// let socketMain;
 
-    // let data = {};
-    // const socketMain = new SocketService('#ws-connection', data);
+// function runMain() {
+//     const element1 = document.querySelector('#tree-render');
+//     const btnShow = document.querySelector('#btn1');
+//     const btnHide = document.querySelector('#btn2');
 
-    socketMain = new SocketService('#ws-connection', data);
-    const html = TreeRender();
+//     btnShow.addEventListener('click', () => {
+//         showE(element1);
+//     });
 
-    // Insert html inside index.html, before error
-    container.innerHTML = html;
+//     btnHide.addEventListener('click', () => {
+//         hideE('#tree-render');
+//     });
+// }
 
-    const avlTree = new AVL('#tree-svg');
-}
+// function showE(container) {
+//     // Testing AVL, socket and others
 
-function hideE(selector) {
-    // Send close connection
-    socketMain = null;
+//     // let data = {};
+//     // const socketMain = new SocketService('#ws-connection', data);
 
-    const ctn = document.querySelector(`${selector}`);
-    ctn.innerHTML = '';
-}
+//     socketMain = new SocketService('#ws-connection', data);
+//     const html = TreeRender();
+
+//     // Insert html inside index.html, before error
+//     container.innerHTML = html;
+
+//     const avlTree = new AVL('#tree-svg');
+// }
+
+// function hideE(selector) {
+//     // Send close connection
+//     socketMain = null;
+
+//     const ctn = document.querySelector(`${selector}`);
+//     ctn.innerHTML = '';
+// }
