@@ -1,0 +1,13 @@
+#tree-render {
+    overflow: scroll;
+    width: 1000vw;
+}
+
+#tree-wrap {
+    background: #071225;
+    padding: 8px;
+    border-radius: 6px;
+    flex: 1;
+    width: 95vw;
+    overflow: scroll;
+}
