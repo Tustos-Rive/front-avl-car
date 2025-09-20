@@ -44,12 +44,7 @@ export default class CarController {
     }
 
     #carJump() {
-        // I think that this i functional, test this!
-        // Isn't functional! FIXME
-        // Save previous colors
-        // Make an animation to rotate...
-
-        // fix jump, when jump the axis y is move and incorrect
+        // fixme jump, when jump the axis y is move and incorrect
 
         this.containerCar.style.cssText = `transform: rotate(-15deg)`;
         this.carObj.jump();
