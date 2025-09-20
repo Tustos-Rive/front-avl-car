@@ -2,15 +2,21 @@ import CarI from '../interfaces/Car.interface.mjs';
 import OwnUtils from '../utils/own/own.mjs';
 
 export default class Car extends CarI {
-    constructor(intialPos, aceleration, velocity, battery = 100, color = 'red') {
+    #previousColors;
+
+    constructor(intialPos, aceleration, velocity, jumpDistanceY, battery = 100, colors = { c1: '#fc0324', c2: '#c20000ff', c3: '#d7fc03ff' }) {
         super();
 
         this.aceleration = aceleration;
         this.velocity = velocity;
         this.battery = battery;
+
+        this.#previousColors = null;
+        this.colorsCar = colors;
         this.sprite = this.getSVGCar();
 
-        this.jumping = false;
+        // this.jumping = false;
+        this.jumpDistanceY = jumpDistanceY;
 
         // Initial position, car not moves to right side in axis "X"
         this.position = intialPos; //{ x: 50, y: 100 }; //OwnUtils.getWindowSize() };
@@ -24,6 +30,26 @@ export default class Car extends CarI {
     down() {
         // This should be send to back...
         this.position.y += 10;
+    }
+
+    jump() {
+        this.#previousColors = this.colorsCar;
+        this.colorsCar = { c1: '#000', c2: 'gray', c3: 'green' };
+        this.getSVGCarAgain();
+        console.log(this.colorsCar);
+    }
+
+    /**
+     * Update the car SVG to can redraw "original" after the jump
+     */
+    afterJump() {
+        this.colorsCar = this.#previousColors;
+
+        this.getSVGCarAgain();
+    }
+
+    getSVGCarAgain() {
+        this.sprite = this.getSVGCar();
     }
 
     checkCollision() {
@@ -49,7 +75,8 @@ export default class Car extends CarI {
     //     }
     // }
 
-    getSVGCar(color1 = 'rgb(173, 0, 0)', color2 = 'rgb(184, 0, 0)', color3 = 'rgb(255, 196, 0)') {
+    // getSVGCar(color1, color2, color3) {
+    getSVGCar() {
         return `<svg id="car-svg" viewBox="0 0 500 300" preserveAspectRatio xmlns="http://www.w3.org/2000/svg" fill="#000000" width="100%" height="100%" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" transform="rotate(0)matrix(1, 0, 0, 1, 0, 0)" stroke="#000000" stroke-width="0.004200000000000001" data-app="Xyris">
             <defs></defs>
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -60,10 +87,10 @@ export default class Car extends CarI {
                     <path d="M 215.984 661.742 L 203.322 630.186 L 162.521 630.186 L 149.184 660.961" fill-rule="nonzero" fill="rgb(92, 95, 96)" transform=""></path>
                     <path d="M 439.767 663.494 L 427.106 631.939 L 386.305 631.939 L 372.968 662.715" fill-rule="nonzero" fill="rgb(92, 95, 96)" transform=""></path>
                     <path d="M 215.984 663.494 L 203.322 631.939 L 162.521 631.939 L 149.184 662.715" fill-rule="nonzero" fill="rgb(92, 95, 96)" transform=""></path>
-                    <path d="M 455.982 668.318 L 466.937 608.276 L 378.695 593.961 L 302.35 550.04 L 118.567 550.04 L 87.4386 599.805 L 98.3939 668.255 L 148.572 668.265 L 161.352 638.147 L 201.814 638.147 L 214.132 668.361 L 371.307 668.36 L 384.453 638.366 L 425.16 638.075 L 437.627 668.263 L 455.982 668.318 Z" fill-rule="nonzero" fill="${color1}" transform=""></path>
-                    <path d="M 435.682 663.48 L 456.109 667.636 L 455.962 668.329 L 437.53 668.34" fill-rule="nonzero" fill="${color2}" transform=""></path>
-                    <path d="M 371.309 668.372 L 211.968 668.457 L 202.034 638.147 L 161.352 638.147 L 148.278 668.268 L 98.3939 668.26 L 87.4027 599.694 L 122.058 599.656 L 378.71 651.885 L 371.309 668.372 Z" fill-rule="nonzero" fill="${color2}" transform=""></path>
-                    <path d="M 87.4581 599.675 L 90.0684 616.491 L 115.7 616.507 L 122.041 599.529 L 87.4581 599.675 Z" fill-rule="nonzero" fill="${color3}" transform="">
+                    <path d="M 455.982 668.318 L 466.937 608.276 L 378.695 593.961 L 302.35 550.04 L 118.567 550.04 L 87.4386 599.805 L 98.3939 668.255 L 148.572 668.265 L 161.352 638.147 L 201.814 638.147 L 214.132 668.361 L 371.307 668.36 L 384.453 638.366 L 425.16 638.075 L 437.627 668.263 L 455.982 668.318 Z" fill-rule="nonzero" fill="${this.colorsCar.c1}" transform=""></path>
+                    <path d="M 435.682 663.48 L 456.109 667.636 L 455.962 668.329 L 437.53 668.34" fill-rule="nonzero" fill="${this.colorsCar.c2}" transform=""></path>
+                    <path d="M 371.309 668.372 L 211.968 668.457 L 202.034 638.147 L 161.352 638.147 L 148.278 668.268 L 98.3939 668.26 L 87.4027 599.694 L 122.058 599.656 L 378.71 651.885 L 371.309 668.372 Z" fill-rule="nonzero" fill="${this.colorsCar.c2}" transform=""></path>
+                    <path d="M 87.4581 599.675 L 90.0684 616.491 L 115.7 616.507 L 122.041 599.529 L 87.4581 599.675 Z" fill-rule="nonzero" fill="${this.colorsCar.c3}" transform="">
                         <animate
                             attributeName="fill-opacity"
                             keyTimes="0; 0.09666666666666666; 0.17633333333333337; 0.26699999999999996; 0.36033333333333323; 0.4536666666666665; 0.5803333333333333; 0.6766666666666667; 0.7773333333333331; 0.8839999999999999; 1"
@@ -76,13 +103,13 @@ export default class Car extends CarI {
                             repeatCount="indefinite"
                         ></animate>
                     </path>
-                    <path d="M 427.971 613.4 L 429.237 630.295 L 462.919 630.313 L 465.987 613.355 L 427.971 613.4 Z" fill-rule="nonzero" fill="${color3}" transform=""></path>
+                    <path d="M 427.971 613.4 L 429.237 630.295 L 462.919 630.313 L 465.987 613.355 L 427.971 613.4 Z" fill-rule="nonzero" fill="${this.colorsCar.c3}" transform=""></path>
                     <path d="M 87.4212 599.602 L 88.1449 604.308 L 120.288 604.258 L 122.059 599.511 L 87.4212 599.602 Z" fill-rule="nonzero" fill="rgb(255, 238, 204)" transform=""></path>
                     <path d="M 366.718 593.673 L 300.4 554.52 L 167.015 554.52 L 144.408 592.894 L 366.718 593.673 Z" fill-rule="nonzero" fill="rgb(49, 49, 86)" transform=""></path>
                     <path d="M 115.78 554.523 L 135.755 554.52 L 92.7934 591.186 L 115.78 554.523 Z" fill-rule="nonzero" fill="rgb(49, 49, 86)" transform=""></path>
-                    <path d="M 251.675 551.745 L 247.259 553.114 L 256.117 605.313 L 260.799 604.338 L 251.675 551.745 Z" fill-rule="nonzero" fill="${color1}" transform=""></path>
+                    <path d="M 251.675 551.745 L 247.259 553.114 L 256.117 605.313 L 260.799 604.338 L 251.675 551.745 Z" fill-rule="nonzero" fill="${this.colorsCar.c1}" transform=""></path>
                     <path d="M 336.932 588.557 L 336.47 593.572 L 330.602 593.546 L 331.187 587.73 L 336.932 588.557 Z" fill-rule="nonzero" fill="rgb(255, 128, 0)" transform=""></path>
-                    <path d="M 336.932 588.557 L 337.808 579.353 L 320.571 576.141 L 318.381 588.702 L 336.932 588.557 Z" fill-rule="nonzero" fill="${color1}" transform=""></path>
+                    <path d="M 336.932 588.557 L 337.808 579.353 L 320.571 576.141 L 318.381 588.702 L 336.932 588.557 Z" fill-rule="nonzero" fill="${this.colorsCar.c1}" transform=""></path>
                     <g transform-origin="center" style="transform-box: fill-box" transform="translate(0, 5)">
                         <path d="M 163.828 666.077 C 163.828 675.192 171.218 682.582 180.334 682.582 C 189.45 682.582 196.84 675.192 196.84 666.077 C 196.84 656.96 189.45 649.57 180.334 649.57 C 171.218 649.57 163.828 656.96 163.828 666.077" fill-rule="nonzero" fill="rgb(255, 191, 0)" transform=""></path>
                         <path
