@@ -1,14 +1,17 @@
 import * as Popper from '../../utils/popper/popper.min.js';
 import * as bootstrap from '../../utils/bootstrap/js/bootstrap.bundle.min.js';
 import Helpers from '../../utils/carlos-cuesta/helpers.js';
+import * as Customs from '../../utils/own/customs.mjs';
 import Toast from '../../utils/carlos-cuesta/toast.js';
 import icons from '../../utils/carlos-cuesta/icons.js';
+import Popup from '../../utils/carlos-cuesta/popup.js';
 
 import TreeRender from '../../components/tree/TreeRender.mjs';
 import RoadController from '../../controllers/Road.controller.js';
 import AVL from '../../models/AVL.model.mjs';
 import SocketService from '../../services/Socket.service.js';
 import CarController from '../../controllers/Car.controller.js';
+import AddObstaclesMenuController from '../../controllers/menuAddObstacles.controller.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
     // runMain();
@@ -22,13 +25,26 @@ class App {
         window.icons = icons;
         window.Popper = Popper;
         window.Toast = Toast;
+        window.Modal = Popup;
+        window.Customs = Customs;
+
+        App.#buttonsReferences();
 
         // Test load road...
         const roadCtrl = new RoadController();
         const carCtrl = new CarController();
+        const menuAddObstaclesCtrl = new AddObstaclesMenuController();
 
         await roadCtrl.init();
         await carCtrl.init(roadCtrl);
+        await menuAddObstaclesCtrl.init();
+    }
+
+    static #buttonsReferences() {
+        window.addButton = `${icons.plusSquare}&nbsp;&nbsp;<span>Add</span>`;
+        window.deleteButton = `${icons.deleteWhite}<span>Remove</span>`;
+        window.acceptButton = `<span>Accept</span>`;
+        window.cancelButton = `${icons.xLg}<span>Cancel</span>`;
     }
 }
 
