@@ -28,7 +28,7 @@ class App {
         const carCtrl = new CarController();
 
         await roadCtrl.init();
-        await carCtrl.init();
+        await carCtrl.init(roadCtrl);
     }
 }
 
