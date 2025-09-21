@@ -1,8 +1,22 @@
 @import '../../utils/bootstrap/css/vapor/bootstrap.min.css';
+/* @import './home.css'; */
+@import './road.css';
 @import './toast.css';
 @import './car.css';
+@import './dialog.css';
+@import './tree.css';
+@import './menus.css';
+@import './overridesBootstrap.css';
 
-/* Styles Dialog and others */
+@font-face {
+    font-family: 'StreetDripsExtrude';
+    src: url('../fonts/StreetDripsExtrude.ttf');
+}
+
+@font-face {
+    font-family: 'StreetDrips';
+    src: url('../fonts/StreetDrips.otf');
+}
 
 a {
     text-decoration: none;
@@ -15,52 +29,6 @@ html {
 body {
     height: 100%;
     background-attachment: fixed;
-}
-
-.dialog {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-    max-width: 80%;
-    max-height: 100vh;
-    z-index: 10000;
-    /* top: calc(100vh - 80%); */
-    position: fixed;
-}
-
-.dialog header {
-    display: flex;
-    padding: 0.1rem;
-    justify-content: space-between;
-}
-
-.dialog #_close {
-    font-size: 1rem;
-    border: 1.5px solid #7700ff;
-    border-radius: 5px;
-    margin: 0;
-    background: transparent;
-}
-
-.dialog #_close:hover {
-    color: rgb(202, 0, 0);
-    border: 1.5px solid rgb(202, 0, 0);
-}
-
-.dialog::backdrop {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.dialog footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-}
-
-.dialog section {
-    overflow: auto;
-    max-height: 80vh;
 }
 
 html {
@@ -104,21 +72,7 @@ input {
     color: #8fd;
 }
 
-#tree-render {
-    overflow: scroll;
-    width: 1000vw;
-}
-
-#tree-wrap {
-    background: #071225;
-    padding: 8px;
-    border-radius: 6px;
-    flex: 1;
-    width: 95vw;
-    overflow: scroll;
-}
-
 .no-scroolbars {
-    display: none;
-    scrollbar-width: none;
+    /* display: none; */
+    scrollbar-width: none !important;
 }

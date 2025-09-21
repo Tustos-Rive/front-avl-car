@@ -1,0 +1,67 @@
+<form id="form-obstacles">
+    <div class="overflow-hidden">
+        <!-- Coordinate X & Y -->
+        <div class="row mx-2 my-2">
+            <div class="col-5">
+                <fieldset class="scheduler-border rounded-4 p-3">
+                    <legend class="float-none w-auto p-2 pb-0 mb-0 scheduler-border">Coordinate &lpar;Pixels&rpar;</legend>
+
+                    <div class="row">
+                        <!-- Coordinate X -->
+                        <div class="col">
+                            <label for="x" class="form-label">X:</label>
+                            <input type="number" id="obstacle-x" class="form-control rounded-1 d-inline-block w-75 bg-purple text-light" placeholder="100" required />
+                        </div>
+
+                        <!-- Coordinate Y -->
+                        <div class="col">
+                            <label for="y" class="form-label">Y:</label>
+                            <input type="number" id="obstacle-y" class="form-control rounded-1 d-inline-block w-75 bg-purple text-light" placeholder="50" required />
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <!-- Spacing row -->
+            <div class="col-1"></div>
+
+            <!-- Obstacles selection -->
+            <div class="col w-100 d-flex align-items-center">
+                <div class="row w-100">
+                    <div class="col-6 text-center">
+                        <label class="form-label" for="obstacles-types">Obstacle Type:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-control w-100" name="obstacles-types" id="types-obtacles" required>
+                            <option selected>Select Type</option>
+                            <option value="cone">Cone</option>
+                            <option value="rock">Rock</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information about rules/errors and obstacle preview -->
+        <div class="row">
+            <div class="col-6 d-flex flex-wrap align-items-center justify-content-center">
+                <!-- Information about rules -->
+                <div class="row">
+                    <div class="obstacles-rules-info col-12 text-info p-3">
+                        <p>- The maxium <strong>X</strong> is: <span id="max-x-obstacle"></span></p>
+                        <p>- The maxium <strong>Y</strong> is: <span id="max-y-obstacle"></span></p>
+                    </div>
+                </div>
+
+                <!-- Container error obstacle information -->
+                <div class="row w-100">
+                    <div class="obstacles-errors visually-hidden col-12 p-3 text-danger" id="obstacle-error-p"></div>
+                </div>
+            </div>
+
+            <!-- Obstacle preview -->
+            <div class="col-6">
+                <div id="obstacle-preview" class="obstacle-preview d-flex align-items-center justify-content-center rounded-4 p-4 border border-2 border-info"></div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,14 @@
+/* Add Obstacles - Menu */
+.obstacle-preview {
+    width: 100% !important;
+    height: 300px !important;
+    background-image: url('../img/svg/obstacle.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+
+    filter: drop-shadow(1px 1px 4px rgb(76, 0, 255));
+}
+
+/* .obstacle-rules-info {
+} */

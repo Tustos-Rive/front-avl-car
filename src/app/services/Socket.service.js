@@ -1,5 +1,7 @@
 import AVL from '../models/AVL.model.mjs';
 
+// TODO: refactorice
+
 export default class SocketService {
     constructor(selectorInfoContainer, objectResultReference) {
         this.objData = objectResultReference;

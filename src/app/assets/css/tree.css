@@ -1,0 +1,18 @@
+#tree-render {
+    /* have equal specifity! */
+    /* overflow: scroll; */
+    width: 1000vw;
+}
+
+#tree-container {
+    background: #071225;
+    padding: 8px;
+    border-radius: 6px;
+    flex: 1;
+    width: 95vw;
+    overflow: scroll;
+}
+
+.tree-container {
+    height: calc(50vh - 30px) !important;
+}
