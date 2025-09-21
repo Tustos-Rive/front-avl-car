@@ -10,3 +10,22 @@ legend.scheduler-border {
     border: none;
     font-size: 14px;
 }
+
+.start-15 {
+    left: 15% !important;
+}
+.start-20 {
+    left: 20% !important;
+}
+.start-30 {
+    left: 30% !important;
+}
+.start-40 {
+    left: 40% !important;
+}
+.start-60 {
+    left: 60% !important;
+}
+.start-70 {
+    left: 70% !important;
+}

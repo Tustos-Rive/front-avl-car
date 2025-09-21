@@ -1,0 +1,59 @@
+/* Temporally this styles while stay in "Initial Screen" */
+body {
+    background-image: url('../img/gif/bg-1.gif');
+    background-position: 0 -40vh;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-size: 100%;
+}
+
+.home {
+    height: 95vh;
+    width: 95vw;
+}
+
+.initial-btns {
+    bottom: 30vh;
+}
+
+.initial-btns > * button {
+    width: 20vw;
+    font-weight: 700;
+    /* TODO: Change font to other more elegant! */
+    font-family: Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.header-initial > * {
+    position: absolute;
+    left: 505px;
+    font-size: 100px;
+    color: rgb(14, 0, 41);
+    font-family: StreetDripsExtrude, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.header-initial::before {
+    content: 'AVL TREE';
+    font-size: 100px;
+    color: var(--bs-info);
+    font-family: StreetDrips;
+
+    position: absolute;
+    top: 10px !important;
+    left: 505px;
+
+    opacity: 50%;
+}
+
+.container-sound-buttons {
+    bottom: 50px;
+    right: 50px;
+}
+
+.btn-toggle-sound {
+    width: 40px;
+    height: 40px;
+    background-image: url('../img/svg/sound-on.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
