@@ -1,3 +1,4 @@
 {
-    "urlAPI": "http://127.0.0.1:5000"
+    "urlAPI": "http://127.0.0.1:4500",
+    "urlSOCKET": "http://localhost:4500"
 }
