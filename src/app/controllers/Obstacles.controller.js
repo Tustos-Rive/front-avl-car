@@ -5,12 +5,17 @@ import ObstacleService from '../services/Obstacles.service.js';
 // TODO: The road should be created before this, because this requires the fucking road width/height
 
 export default class ObstaclesController {
-    async init(roadCtrl) {
+    async init(roadCtrl, AVLCtrl) {
         if (!roadCtrl) {
             throw new Error('Missing Road');
         }
 
+        if (!AVLCtrl) {
+            throw new Error('Missing AVL');
+        }
+
         this.roadController = roadCtrl;
+        this.AVLController = AVLCtrl;
 
         // Obstacles instancies (model and service)
         this.obstacleObj = null;
@@ -24,9 +29,7 @@ export default class ObstaclesController {
 
         this.html = await menuAddObstacles.init();
 
-        // TODO: Put a endpoint in the backend from this...
-        // Helpers.fetchJSON(`${URLAPI}/json/obstaclesTypes`);
-        const response = [
+        /* const response = [
             { id: '01', type: 'Cone' },
             { id: '02', type: 'Rock' },
             { id: '03', type: 'Tree' },
@@ -37,11 +40,12 @@ export default class ObstaclesController {
             { id: '08', type: 'Car' },
             { id: '09', type: 'Bicycle' },
             { id: '10', type: 'Chair' },
-        ];
+        ]; */
 
-        // TODO: Put types in backend!
+        const response = await Helpers.fetchJSON(`${URLAPI}/data/json/obstacles_types.json`);
+
         this.obstaclesTypesList = Helpers.toOptionList({
-            items: response,
+            items: response.data,
             value: 'id', // Is a number that identify a obstacle
             text: 'type', // Is the type name!
             firstOption: 'Select Type',
@@ -119,6 +123,7 @@ export default class ObstaclesController {
 
             // Call the backend validations
             const coordinatesOK = this.obstacleObj.validateCoordinates();
+            // const coordinatesOK
 
             if (coordinatesOK.ok === true) {
                 // New data not contains road Object, is irrelevant for the backend
@@ -196,6 +201,7 @@ export default class ObstaclesController {
     #callServiceSendData(data) {
         // For testing
         // TODO: Call the service
+
         return new Promise((resolve, reject) => {
             console.log('Sending this data: ', data);
 
@@ -243,7 +249,7 @@ export default class ObstaclesController {
             const typeIndex = typeObstacle.selectedIndex;
 
             // Get the "text" from the option selected
-            const typeTxt = typeObstacle.options[typeIndex].text;
+            const typeTxt = parseInt(typeObstacle.options[typeIndex].value);
 
             const data = { x: valX, y: valY, type: typeTxt, road: this.roadController.getRoad() };
 

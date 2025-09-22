@@ -1,3 +1,4 @@
+import AVLController from './AVL.controller.js';
 import ObstaclesController from './Obstacles.controller.js';
 import RoadController from './Road.controller.js';
 
@@ -5,6 +6,10 @@ export default class HomeController {
     #controllers;
     async init() {
         this.#controllers = {};
+
+        // To try fix have 2 obstacles dialogs/menus
+        // This controle if the event that creates road is ALREADY called or not
+        this.alreadyListenRoadCreated = false;
 
         // TODO: Load start screen, contains the initial menu
         // TODO: When click PLAY button, to start game, appears a menu that give the road width (Distance),
@@ -52,15 +57,24 @@ export default class HomeController {
         this.elements.btnInsertObstacles.addEventListener('click', async (ev) => {
             // FIXME: Make more clean this, see logic again!
             try {
+                // FIXME: Check if this is OK
+                this.#controllers.AVL = new AVLController();
+
                 this.#controllers.Obstacles = new ObstaclesController();
-                await this.#controllers.Obstacles.init(this.#controllers.Road);
+
+                // Send AVL controller to Obstacles, every time add obstacle call...
+                await this.#controllers.Obstacles.init(this.#controllers.Road, this.#controllers.AVL);
             } catch (e) {
                 Toast.show({ message: `${e.message}, first create a Road`, mode: 'warning', error: e });
 
                 // Do click to btn to open Menu "Create Road"
                 this.elements.btnCreateRoad.click();
 
-                this.#listenerRoadCreated();
+                // If this event IS NOT called, call...
+                if (this.alreadyListenRoadCreated === false) {
+                    this.alreadyListenRoadCreated = true;
+                    this.#listenerRoadCreated();
+                }
             }
         });
     }
@@ -71,7 +85,11 @@ export default class HomeController {
                 this.#controllers.Road = new RoadController();
                 await this.#controllers.Road.init();
 
-                this.#listenerRoadCreated();
+                // If this event IS NOT called, call...
+                if (this.alreadyListenRoadCreated === false) {
+                    this.alreadyListenRoadCreated = true;
+                    this.#listenerRoadCreated();
+                }
             } catch (e) {}
         });
     }

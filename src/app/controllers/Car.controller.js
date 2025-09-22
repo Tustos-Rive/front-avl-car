@@ -1,6 +1,8 @@
 import Car from '../models/Car.model.mjs';
 import OwnUtils from '../utils/own/own.mjs';
 
+// TODO: Missing menu to create a car (Battery, velocity, aceleration)
+
 export default class CarController {
     async init(roadCtrl) {
         // To get easily the dimensions and others
