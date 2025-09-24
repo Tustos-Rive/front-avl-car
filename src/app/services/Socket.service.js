@@ -3,8 +3,11 @@ import AVL from '../models/AVL.model.mjs';
 // TODO: refactorice
 
 export default class SocketService {
-    constructor(selectorInfoContainer, objectResultReference) {
-        this.objData = objectResultReference;
+    // constructor(selectorInfoContainer, objectResultReference) {
+    constructor(channel = '/') {
+        this.socketURL = channel === '/' ? `${configs.urlSOCKET}/` : `${configs.urlSOCKET}/${channel}`;
+        this.socketio = io(this.socketURL);
+        /* this.objData = objectResultReference;
 
         this.WS_URL = 'ws://localhost:6789';
         this.ws = new WebSocket(this.WS_URL);
@@ -13,10 +16,27 @@ export default class SocketService {
         this.wsOnOpen();
         this.wsOnClose();
         this.wsOnError();
-        this.wsOnMessage();
+        this.wsOnMessage(); */
+        this.on_connect_error();
     }
 
-    wsOnOpen() {
+    on_connect() {}
+
+    on_disconnect() {}
+
+    on_connect_error() {
+        this.socketio.on('connect_error', (error) => {
+            if (this.socketio.active) {
+                // temporary failure, the socket will automatically try to reconnect
+            } else {
+                // the connection was denied by the server
+                // in that case, `socket.connect()` must be manually called in order to reconnect
+                console.log(error.message);
+            }
+        });
+    }
+
+    /* wsOnOpen() {
         this.ws.onopen = () => {
             this.statusSpan.textContent = 'Server: Connected';
             this.statusSpan.style.color = '#8f8';
@@ -72,5 +92,5 @@ export default class SocketService {
                 console.error('msg inválido', e);
             }
         };
-    }
+    } */
 }

@@ -6,6 +6,8 @@ import Toast from '../../utils/carlos-cuesta/toast.js';
 import icons from '../../utils/carlos-cuesta/icons.js';
 import Popup from '../../utils/carlos-cuesta/popup.js';
 
+// import { io } from 'socket.io-client';
+
 import TreeRender from '../../components/tree/TreeRender.mjs';
 import AVL from '../../models/AVL.model.mjs';
 import SocketService from '../../services/Socket.service.js';
@@ -49,6 +51,7 @@ class App {
         window.Toast = Toast;
         window.Modal = Popup;
         window.Customs = Customs;
+        window.io = io;
     }
 
     static async #globalVariables() {

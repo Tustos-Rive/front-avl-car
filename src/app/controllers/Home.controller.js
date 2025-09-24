@@ -1,3 +1,4 @@
+import AVLController from './AVL.controller.js';
 import ObstaclesController from './Obstacles.controller.js';
 import RoadController from './Road.controller.js';
 
@@ -5,6 +6,10 @@ export default class HomeController {
     #controllers;
     async init() {
         this.#controllers = {};
+
+        // To try fix have 2 obstacles dialogs/menus
+        // This controle if the event that creates road is ALREADY called or not
+        this.alreadyListenRoadCreated = false;
 
         // TODO: Load start screen, contains the initial menu
         // TODO: When click PLAY button, to start game, appears a menu that give the road width (Distance),
@@ -17,6 +22,7 @@ export default class HomeController {
         this.elements.btnSound = document.querySelector('#btn-toggle-sound');
         this.elements.btnInsertObstacles = document.querySelector('#btn-insert-obstacles');
         this.elements.btnCreateRoad = document.querySelector('#btn-create-road');
+        this.elements.btnWatchRoads = document.querySelector('#btn-watch-roads');
 
         this.#addListeners();
     }
@@ -31,9 +37,26 @@ export default class HomeController {
             this.#listenerBtnSound();
             this.#listernerBtnCreateRoad();
             this.#listernerBtnObstacles();
+            this.#listenerBtnWatchRoads();
         } catch (e) {
             Toast.show({ message: 'Has happend something adding the listeners', mode: 'danger', error: e });
         }
+    }
+
+    // FIXME: Fix this... Add emenu :/
+    #listenerBtnWatchRoads() {
+        this.elements.btnWatchRoads.addEventListener('click', async (ev) => {
+            try {
+                // Show menu to create obstacles (Don't have obstacles...)
+                if (!this.#controllers.AVL) {
+                    Toast.show({ message: 'First You should create the <span class="text-warning">Obstacles</span>. <span class="text-info">Opening Menu</span>...' });
+                    this.elements.btnInsertObstacles.click();
+                } else {
+                    // By now, just get the road in order, after, create the menu ROADS!
+                    this.#controllers.AVL.service.emit_get_road_inorder();
+                }
+            } catch (e) {}
+        });
     }
 
     #listenerBtnSound() {
@@ -52,15 +75,24 @@ export default class HomeController {
         this.elements.btnInsertObstacles.addEventListener('click', async (ev) => {
             // FIXME: Make more clean this, see logic again!
             try {
+                // FIXME: Check if this is OK
+                this.#controllers.AVL = new AVLController(this.#controllers.Road);
+
                 this.#controllers.Obstacles = new ObstaclesController();
-                await this.#controllers.Obstacles.init(this.#controllers.Road);
+
+                // Send AVL controller to Obstacles, every time add obstacle call...
+                await this.#controllers.Obstacles.init(this.#controllers.Road, this.#controllers.AVL);
             } catch (e) {
                 Toast.show({ message: `${e.message}, first create a Road`, mode: 'warning', error: e });
 
                 // Do click to btn to open Menu "Create Road"
                 this.elements.btnCreateRoad.click();
 
-                this.#listenerRoadCreated();
+                // If this event IS NOT called, call...
+                if (this.alreadyListenRoadCreated === false) {
+                    this.alreadyListenRoadCreated = true;
+                    this.#listenerRoadCreated();
+                }
             }
         });
     }
@@ -71,7 +103,11 @@ export default class HomeController {
                 this.#controllers.Road = new RoadController();
                 await this.#controllers.Road.init();
 
-                this.#listenerRoadCreated();
+                // If this event IS NOT called, call...
+                if (this.alreadyListenRoadCreated === false) {
+                    this.alreadyListenRoadCreated = true;
+                    this.#listenerRoadCreated();
+                }
             } catch (e) {}
         });
     }

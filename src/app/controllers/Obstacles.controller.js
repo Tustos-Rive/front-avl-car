@@ -5,12 +5,17 @@ import ObstacleService from '../services/Obstacles.service.js';
 // TODO: The road should be created before this, because this requires the fucking road width/height
 
 export default class ObstaclesController {
-    async init(roadCtrl) {
+    async init(roadCtrl, AVLCtrl) {
         if (!roadCtrl) {
             throw new Error('Missing Road');
         }
 
+        if (!AVLCtrl) {
+            throw new Error('Missing AVL');
+        }
+
         this.roadController = roadCtrl;
+        this.AVLController = AVLCtrl;
 
         // Obstacles instancies (model and service)
         this.obstacleObj = null;
@@ -24,9 +29,7 @@ export default class ObstaclesController {
 
         this.html = await menuAddObstacles.init();
 
-        // TODO: Put a endpoint in the backend from this...
-        // Helpers.fetchJSON(`${URLAPI}/json/obstaclesTypes`);
-        const response = [
+        /* const response = [
             { id: '01', type: 'Cone' },
             { id: '02', type: 'Rock' },
             { id: '03', type: 'Tree' },
@@ -37,11 +40,12 @@ export default class ObstaclesController {
             { id: '08', type: 'Car' },
             { id: '09', type: 'Bicycle' },
             { id: '10', type: 'Chair' },
-        ];
+        ]; */
 
-        // TODO: Put types in backend!
+        const response = await Helpers.fetchJSON(`${URLAPI}/data/json/obstacles_types.json`);
+
         this.obstaclesTypesList = Helpers.toOptionList({
-            items: response,
+            items: response.data,
             value: 'id', // Is a number that identify a obstacle
             text: 'type', // Is the type name!
             firstOption: 'Select Type',
@@ -110,22 +114,26 @@ export default class ObstaclesController {
             this.#disableEnableModalButtons();
 
             // Get the form data
+            /**@type {Obstacle}*/
             const formData = this.#getFormData();
 
             // Instanciate the Obstacle object
             this.obstacleObj = new Obstacle(formData);
 
-            console.log(this.obstacleObj);
-
             // Call the backend validations
-            const coordinatesOK = this.obstacleObj.validateCoordinates();
+            // const coordinatesOK = this.obstacleObj.validateCoordinates();
+            const coordinatesOK = { ok: true };
+            // const coordinatesOK
 
             if (coordinatesOK.ok === true) {
-                // New data not contains road Object, is irrelevant for the backend
-                const newFormData = this.#formatNewDataToSend(formData);
+                /**@type {Obstacle}*/
+
+                // TODO: Call the this.roadController.addObstacle() to... add? :/
+                // Send the "formData" the backend just answer True|False with the statusCode
+                // 200 = True, other = False
 
                 // Send data to backend
-                const req = await this.#callServiceSendData(newFormData);
+                const req = await this.#callServiceSendData(this.obstacleObj);
 
                 // Validations of request
                 if (req.status === 200) {
@@ -133,14 +141,19 @@ export default class ObstaclesController {
                         this.elements.divError.classList.add('visually-hidden');
                     }
 
-                    // TODO: Call the this.roadController.addObstacle() to... add? :/
-                    // Send the "formData" the backend just answer True|False with the statusCode
-                    // 200 = True, other = False
-                    formData.road.setObstacle(newFormData);
+                    // Set the ID obtained from the backend!
+                    this.obstacleObj.id = req.data;
 
-                    Toast.show({ message: 'The obstacle was added!', mode: 'success' });
+                    // FIXME: I think this is ok, but, fix after tests
+                    this.roadController.getRoad().setObstacle(this.obstacleObj);
+
+                    console.log(this.obstacleObj);
+                    console.log(this.roadController.getRoad());
+                    // await this.AVLController.send_roads_to_backend();
+
+                    // Toast.show({ message: 'The obstacle was added!', mode: 'success' });
                 } else {
-                    Toast.show({ message: 'It was not possible add the obstacle!', mode: 'danger' });
+                    Toast.show({ message: req.message, mode: 'danger' });
                     this.#showSpanError(req.error);
                 }
             } else {
@@ -158,7 +171,7 @@ export default class ObstaclesController {
      * Format data (Remove the road from formData)
      * @param {Object} data Data to format
      */
-    #formatNewDataToSend(data) {
+    #newObstacleWithoutRoad(data) {
         const newData = { x: data.x, y: data.y, type: data.type };
         return newData;
     }
@@ -193,21 +206,23 @@ export default class ObstaclesController {
      * @param {Obstacle} data The obstacle object
      * @returns
      */
-    #callServiceSendData(data) {
+    async #callServiceSendData(data) {
+        return await this.AVLController.send_roads_to_backend(data);
         // For testing
         // TODO: Call the service
-        return new Promise((resolve, reject) => {
-            console.log('Sending this data: ', data);
 
-            let res = { status: 200, error: 'Already exists an obstacle in the same coordinates!' };
+        // return new Promise((resolve, reject) => {
+        //     console.log('Sending this data: ', data);
 
-            let timeout = setTimeout(() => {
-                timeout = null;
-                console.log('Res: ', res);
+        //     let res = { status: 200, error: 'Already exists an obstacle in the same coordinates!' };
 
-                resolve(res);
-            }, 1000);
-        });
+        //     let timeout = setTimeout(() => {
+        //         timeout = null;
+        //         console.log('Res: ', res);
+
+        //         resolve(res);
+        //     }, 1000);
+        // });
     }
 
     #showToastInfo() {
@@ -243,9 +258,9 @@ export default class ObstaclesController {
             const typeIndex = typeObstacle.selectedIndex;
 
             // Get the "text" from the option selected
-            const typeTxt = typeObstacle.options[typeIndex].text;
+            const typeTxt = parseInt(typeObstacle.options[typeIndex].value);
 
-            const data = { x: valX, y: valY, type: typeTxt, road: this.roadController.getRoad() };
+            const data = { x: valX, y: valY, type: typeTxt };
 
             return data;
         } catch (e) {

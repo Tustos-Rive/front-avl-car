@@ -1,6 +1,6 @@
 /* Temporally this styles while stay in "Initial Screen" */
 body {
-    background-image: url('../img/gif/bg-1.gif');
+    /* background-image: url('../img/gif/bg-1.gif'); */
     background-position: 0 -40vh;
     background-repeat: no-repeat;
     background-attachment: local;
