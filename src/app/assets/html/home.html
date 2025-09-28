@@ -4,26 +4,33 @@
         <h1>AVL TREE</h1>
     </div>
 
-    <!-- Buttons -->
-    <div class="initial-btns btn-group-vertical position-absolute" id="container-initial-btns">
-        <div class="mb-1 ms-5 text-center">
-            <button class="btn btn-info text-uppercase" id="btn-create-road">Create Road</button>
+    <div class="row h-100 w-100">
+        <div class="col-4 h-100 mw-100 buttons-home">
+            <div class="initial-btns btn-group-vertical d-block position-absolute" id="container-initial-btns">
+                <div class="mb-1 ms-5 text-center">
+                    <button class="btn btn-info text-uppercase" id="btn-create-road">Create Road</button>
+                </div>
+                <div class="mb-1 ms-5 text-center">
+                    <button class="btn btn-info text-uppercase" id="btn-load-json">Load JSON</button>
+                </div>
+                <div class="mb-1 ms-5 text-center">
+                    <button class="btn btn-info text-uppercase" id="btn-watch-roads">Watch Roads</button>
+                </div>
+                <div class="mb-1 ms-5 text-center">
+                    <button class="btn btn-info text-uppercase" id="btn-insert-obstacles">Insert Obstacles</button>
+                </div>
+                <div class="ms-5 text-center">
+                    <button class="btn btn-info text-uppercase" id="btn-play">Play</button>
+                </div>
+            </div>
         </div>
-        <div class="mb-1 ms-5 text-center">
-            <button class="btn btn-info text-uppercase" id="btn-load-json">Load JSON</button>
-        </div>
-        <div class="mb-1 ms-5 text-center">
-            <button class="btn btn-info text-uppercase" id="btn-watch-roads">Watch Roads</button>
-        </div>
-        <div class="mb-1 ms-5 text-center">
-            <button class="btn btn-info text-uppercase" id="btn-insert-obstacles">Insert Obstacles</button>
-        </div>
-        <div class="ms-5 text-center">
-            <button class="btn btn-info text-uppercase" id="btn-play">Play</button>
+        <div class="col-8">
+            <div class="h-100" id="tree-render"><svg id="tree-svg"></svg></div>
         </div>
     </div>
 
-    <div class="container-sound-buttons position-absolute float-end" id="container-sound-buttons">
+    <!-- FEATURE: Add music, but, before end the game... -->
+    <!-- <div class="container-sound-buttons position-absolute float-end" id="container-sound-buttons">
         <button class="btn btn-toggle-sound" id="btn-toggle-sound"></button>
-    </div>
+    </div> -->
 </div>

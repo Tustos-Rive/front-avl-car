@@ -6,9 +6,6 @@ import Toast from '../../utils/carlos-cuesta/toast.js';
 import icons from '../../utils/carlos-cuesta/icons.js';
 import Popup from '../../utils/carlos-cuesta/popup.js';
 
-// import { io } from 'socket.io-client';
-
-import TreeRender from '../../components/tree/TreeRender.mjs';
 import AVL from '../../models/AVL.model.mjs';
 import SocketService from '../../services/Socket.service.js';
 
@@ -17,6 +14,9 @@ import CarController from '../../controllers/Car.controller.js';
 import RoadController from '../../controllers/Road.controller.js';
 import ObstaclesController from '../../controllers/Obstacles.controller.js';
 import HomeController from '../../controllers/Home.controller.js';
+import TreeService from '../../services/Tree.service.js';
+import Road from '../../models/Road.model.mjs';
+import Car from '../../models/Car.model.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
     // runMain();
@@ -24,14 +24,18 @@ document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
+// TODO: The frontend ever begin from zero!, never get the backend data initial
+// If user reload page, frontend data restart, backend have history data and not RESTART!
+
 class App {
     static async init() {
-        App.#objectsReferences();
+        App.#uitlsReferences();
+        // App.#modelsReferences();
+        // App.#controllersReferences();
         App.#buttonsReferences();
         await App.#globalVariables();
 
         const homeController = new HomeController();
-
         await homeController.init();
 
         // Test load road...
@@ -44,15 +48,23 @@ class App {
         // await obstaclesCtrl.init(roadCtrl);
     }
 
-    static #objectsReferences() {
+    static #uitlsReferences() {
         window.Helpers = Helpers;
         window.icons = icons;
         window.Popper = Popper;
         window.Toast = Toast;
         window.Modal = Popup;
         window.Customs = Customs;
-        window.io = io;
+        // window.io = io;
     }
+
+    // static #modelsReferences() {
+    //     window.ROAD_MODEL = new Road();
+    //     window.CAR_MODEL = new Car();
+    //     window.AVL_MODEL = new AVL();
+    // }
+
+    // static #controllersReferences() {}
 
     static async #globalVariables() {
         window.configs = await Helpers.fetchJSON('./app/assets/json/configs.json');
