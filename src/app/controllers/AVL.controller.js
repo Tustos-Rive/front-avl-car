@@ -189,7 +189,7 @@ export default class AVLController {
         // Configuramos el layout del árbol para que D3 calcule las posiciones de cada nodo y línea.
         const treeDesign = d3
             .tree()
-            .size([anchoDinamico - 160, this.__altoSVG - 300]) //this.__altoSVG - 160])
+            .size([anchoDinamico - 160, altoDinamico - 160]) //this.__altoSVG - 400]) //this.__altoSVG - 160])
             .separation((a, b) => (a.parent === b.parent ? 1.4 : 2.2));
 
         treeDesign(raizJerarquia); // Aplicamos el layout a nuestros datos.
