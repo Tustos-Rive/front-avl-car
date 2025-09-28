@@ -3,15 +3,23 @@ import Road from '../models/Road.model.mjs';
 import OwnUtils from '../utils/own/own.mjs';
 
 export default class RoadController {
-    #roadDiv;
+    #containerMain;
     #modalMenu;
     #roadWidth;
+
+    constructor(treeService = null) {
+        this.treeService = treeService;
+    }
 
     async init(menu = true) {
         if (menu === true) {
             const menuHML = await Helpers.fetchText('./app/assets/html/roadAddMenu.html');
-            this.containerRoad = document.querySelector('#road-game');
-            this.#roadDiv = document.querySelector('#road-container');
+            // this.containerMain = document.querySelector('#road-game');
+            // To can get container road HEIGHT
+            await this.#innerRoad();
+
+            this.#containerMain = document.querySelector('#road-container');
+            // this.#roadDiv = document.querySelector('#road-container');
 
             this.#modalMenu = new Modal({
                 modal: false,
@@ -25,6 +33,11 @@ export default class RoadController {
             });
 
             this.#modalMenu.show();
+
+            // Prevent send when press enter or similar... enter dispatch "submit" event in forms
+            document.querySelector(`#${this.#modalMenu.id} #form-create-road`).addEventListener('submit', (ev) => {
+                ev.preventDefault();
+            });
         } else {
             // this.roadHtml = await RoadGame();
             // this.#innerRoad();
@@ -44,14 +57,19 @@ export default class RoadController {
                 return;
             }
 
-            this.#roadWidth = parseFloat(document.querySelector('#inp-road-width').value);
             Toast.show({ message: 'Road created succesfully!', mode: 'success' });
+            this.road = new Road(this.#getSizes());
+
+            // Sent event to reset avl (to no confuse...)
+            this.treeService.emit_reset_avl();
+
+            console.log('Tree reseted!!!');
+
+            // ROAD_MODEL.init(this.#getSizes);
 
             // Dispatch event to can continue with others proccess
             document.dispatchEvent(new CustomEvent('road-created'));
             this.#closeMenu();
-
-            this.road = new Road(this.#getSizes());
         } catch (e) {
             Toast.show({ message: 'Has happend something when try create Road.', mode: 'danger', error: e });
         }
@@ -61,8 +79,14 @@ export default class RoadController {
         return this.road;
     }
 
-    #innerRoad() {
-        this.containerRoad.innerHTML = this.roadHtml;
+    async #innerRoad() {
+        try {
+            const html = await Helpers.fetchText('./app/assets/html/road.html');
+            document.querySelector('main').insertAdjacentHTML('afterbegin', html);
+        } catch (error) {
+            console.error(error);
+        }
+        // this.containerMain.innerHTML = this.roadHtml;
     }
 
     /**
@@ -70,15 +94,18 @@ export default class RoadController {
      * @returns An object that contains width, height and top sizes of road
      */
     #getSizes() {
-        const roadDivStyles = getComputedStyle(this.#roadDiv);
+        console.log(this.#containerMain);
 
-        const heightRoad = OwnUtils.fromPixelsToNumber(roadDivStyles.height);
-        let topPositionRoad = OwnUtils.fromPixelsToNumber(roadDivStyles.top);
+        const containerMainStyles = getComputedStyle(this.#containerMain);
+
+        const roadWidth = parseFloat(document.querySelector('#inp-road-width').value);
+        const heightRoad = OwnUtils.fromPixelsToNumber(containerMainStyles.height);
+        let topPositionRoad = OwnUtils.fromPixelsToNumber(containerMainStyles.top);
 
         if (isNaN(topPositionRoad)) {
             topPositionRoad = 0;
         }
 
-        return { width: this.#roadWidth, height: heightRoad, top: topPositionRoad };
+        return { width: roadWidth, height: heightRoad, top: topPositionRoad };
     }
 }

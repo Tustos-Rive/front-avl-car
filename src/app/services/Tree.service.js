@@ -4,12 +4,15 @@ import SocketService from './Socket.service.js';
 export default class TreeService extends SocketService {
     constructor() {
         super('AVLTree');
-        this.count = 0;
         // Call the event handlers
         this.on_connect();
         this.on_disconnect();
         this.on_obstacle_inserted();
+        this.on_road_preorder();
         this.on_road_inorder();
+        this.on_road_posorder();
+        this.on_avl_tree_balanced();
+        this.on_avl_reseted();
     }
 
     on_connect() {
@@ -30,12 +33,44 @@ export default class TreeService extends SocketService {
         });
     }
 
+    on_road_preorder() {
+        this.socketio.on('preorder', (ev) => {
+            const event = new CustomEvent('pre-order', { detail: ev.data });
+            document.dispatchEvent(event);
+        });
+    }
+
     on_road_inorder() {
         this.socketio.on('inorder', (ev) => {
-            this.count++;
-            console.log(this.count);
+            const event = new CustomEvent('in-order', { detail: ev.data });
+            document.dispatchEvent(event);
+        });
+    }
 
-            console.log('in-Order road: ', ev);
+    on_road_posorder() {
+        this.socketio.on('posorder', (ev) => {
+            const event = new CustomEvent('pos-order', { detail: ev.data });
+            document.dispatchEvent(event);
+        });
+    }
+
+    on_avl_tree_balanced() {
+        this.socketio.on('avl_tree_balanced', (ev) => {
+            console.log('AVL From Backend: ', ev);
+
+            const data = ev.data ?? {};
+            const event = new CustomEvent('avl_tree_balanced', { detail: data });
+            document.dispatchEvent(event);
+        });
+    }
+
+    on_avl_reseted() {
+        this.socketio.on('avl_reseted', (ev) => {
+            console.log('AVL Reseted road: ', ev);
+
+            const data = ev.data ?? {};
+            const event = new CustomEvent('avl_reseted', { detail: data });
+            document.dispatchEvent(event);
         });
     }
 
@@ -47,7 +82,15 @@ export default class TreeService extends SocketService {
         this.socketio.emit('insert_obstacle', data);
     }
 
-    emit_get_road_inorder(data = {}) {
-        this.socketio.emit('road_inorder', data);
+    emit_get_road(road_name, data = {}) {
+        this.socketio.emit(`road_${road_name}`, data);
+    }
+
+    emit_get_tree(data = {}) {
+        this.socketio.emit('get_tree_avl', data);
+    }
+
+    emit_reset_avl(data = {}) {
+        this.socketio.emit('reset_avl', data);
     }
 }

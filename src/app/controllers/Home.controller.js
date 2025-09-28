@@ -1,11 +1,14 @@
+import TreeService from '../services/Tree.service.js';
 import AVLController from './AVL.controller.js';
 import ObstaclesController from './Obstacles.controller.js';
 import RoadController from './Road.controller.js';
+import WatchRoadsController from './WatchRoads.controller.js';
 
 export default class HomeController {
     #controllers;
     async init() {
         this.#controllers = {};
+        this.treeService = new TreeService();
 
         // To try fix have 2 obstacles dialogs/menus
         // This controle if the event that creates road is ALREADY called or not
@@ -14,7 +17,8 @@ export default class HomeController {
         // TODO: Load start screen, contains the initial menu
         // TODO: When click PLAY button, to start game, appears a menu that give the road width (Distance),
         // and if don't have obstacles, show menu to add obstacles!
-        this.containerMain = document.querySelector('#start-screen');
+        // this.containerMain = document.querySelector('#start-screen');
+        this.containerMain = document.querySelector('main');
         await this.#loadHML();
 
         this.elements = {};
@@ -24,27 +28,35 @@ export default class HomeController {
         this.elements.btnCreateRoad = document.querySelector('#btn-create-road');
         this.elements.btnWatchRoads = document.querySelector('#btn-watch-roads');
 
-        this.#addListeners();
+        await this.#addListeners();
+
+        // Reset backend AVL data
+        this.__emitResetTree();
+    }
+
+    __emitResetTree() {
+        this.treeService.emit_reset_avl();
     }
 
     async #loadHML() {
         const html = await Helpers.fetchText('./app/assets/html/home.html');
-        this.containerMain.innerHTML = html;
+        // this.containerMain.innerHTML = html;
+        this.containerMain.insertAdjacentHTML('afterbegin', html);
     }
 
-    #addListeners() {
+    async #addListeners() {
         try {
-            this.#listenerBtnSound();
+            // this.#listenerBtnSound();
             this.#listernerBtnCreateRoad();
             this.#listernerBtnObstacles();
-            this.#listenerBtnWatchRoads();
+            await this.#listenerBtnWatchRoads();
         } catch (e) {
             Toast.show({ message: 'Has happend something adding the listeners', mode: 'danger', error: e });
         }
     }
 
     // FIXME: Fix this... Add emenu :/
-    #listenerBtnWatchRoads() {
+    async #listenerBtnWatchRoads() {
         this.elements.btnWatchRoads.addEventListener('click', async (ev) => {
             try {
                 // Show menu to create obstacles (Don't have obstacles...)
@@ -52,8 +64,15 @@ export default class HomeController {
                     Toast.show({ message: 'First You should create the <span class="text-warning">Obstacles</span>. <span class="text-info">Opening Menu</span>...' });
                     this.elements.btnInsertObstacles.click();
                 } else {
+                    if (!this.#controllers.WatchRoads) {
+                        this.#controllers.WatchRoads = new WatchRoadsController(this.#controllers.AVL);
+                    }
+
+                    await this.#controllers.WatchRoads.init();
                     // By now, just get the road in order, after, create the menu ROADS!
-                    this.#controllers.AVL.service.emit_get_road_inorder();
+                    // this.#controllers.AVL.service.emit_get_road('preorder');
+                    // this.#controllers.AVL.service.emit_get_road('inorder');
+                    // this.#controllers.AVL.service.emit_get_road('posorder');
                 }
             } catch (e) {}
         });
@@ -75,10 +94,16 @@ export default class HomeController {
         this.elements.btnInsertObstacles.addEventListener('click', async (ev) => {
             // FIXME: Make more clean this, see logic again!
             try {
-                // FIXME: Check if this is OK
-                this.#controllers.AVL = new AVLController(this.#controllers.Road);
+                if (!this.#controllers.AVL) {
+                    this.#controllers.AVL = new AVLController(this.#controllers.Road);
+                }
 
-                this.#controllers.Obstacles = new ObstaclesController();
+                if (!this.#controllers.Obstacles) {
+                    this.#controllers.Obstacles = new ObstaclesController();
+                }
+
+                // Set the obstacle controller to the AVLController
+                // this.#controllers.AVL.setObstacleController(this.#controllers.Obstacles);
 
                 // Send AVL controller to Obstacles, every time add obstacle call...
                 await this.#controllers.Obstacles.init(this.#controllers.Road, this.#controllers.AVL);
@@ -100,7 +125,11 @@ export default class HomeController {
     #listernerBtnCreateRoad() {
         this.elements.btnCreateRoad.addEventListener('click', async (ev) => {
             try {
-                this.#controllers.Road = new RoadController();
+                // Evit overwrite!
+                if (!this.#controllers.Road) {
+                    this.#controllers.Road = new RoadController(this.treeService);
+                }
+
                 await this.#controllers.Road.init();
 
                 // If this event IS NOT called, call...
