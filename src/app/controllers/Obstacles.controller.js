@@ -83,11 +83,17 @@ export default class ObstaclesController {
         const acceptBtn = document.querySelector(`#${modalId}-btn2`);
         const divError = document.querySelector(`#${modalId} #obstacle-error-p`);
         const typeSelect = document.querySelector(`#${modalId} #types-obtacles`);
+        const maxXObstacle = document.querySelector(`#${modalId} #max-x-obstacle`);
+        const maxYObstacle = document.querySelector(`#${modalId} #max-y-obstacle`);
+        const minXObstacle = document.querySelector(`#${modalId} #min-x-obstacle`);
+        const minYObstacle = document.querySelector(`#${modalId} #min-y-obstacle`);
 
         typeSelect.innerHTML = this.obstaclesTypesList;
 
-        this.elements = { addBtn, cancelBtn, acceptBtn, divError, typeSelect };
+        this.elements = { addBtn, cancelBtn, acceptBtn, divError, typeSelect, maxXObstacle, maxYObstacle, minYObstacle, minXObstacle };
+
         this.#listenTypeChanges(modalId);
+        this.#addLimitsAttributtes();
     }
 
     /**
@@ -106,6 +112,7 @@ export default class ObstaclesController {
         try {
             // Validate form before somithing!
             if (!Helpers.okForm('#form-obstacles')) {
+                this.#validateMinAndMax();
                 Customs.toastBeforeAddRecord();
                 return;
             }
@@ -175,6 +182,76 @@ export default class ObstaclesController {
         }
     }
 
+    #addLimitsAttributtes(needThisValues = false) {
+        console.log('Inside Add Limits Attributes!');
+
+        const __elements = this.#getFormElements();
+
+        const __inputX = __elements.inpx;
+        const __inputY = __elements.inpy;
+        const __road = this.roadController.getRoad();
+
+        // Min-Max axis X
+        const __maxX = __road.getWidth() - 15;
+        // I want 5%
+        const __minX = parseInt(__maxX * 0.05);
+
+        // Min-Max axis Y
+        const __maxY = __road.getHeight();
+        const __minY = 5;
+
+        // Set both attributes
+        __inputX.setAttribute('min', `${__minX}`);
+        __inputX.setAttribute('max', `${__maxX}`);
+        __inputY.setAttribute('min', `${__minY}`);
+        __inputY.setAttribute('max', `${__maxY}`);
+
+        // Add min and max to rules to user can see
+        this.elements.maxXObstacle.textContent = __maxX;
+        this.elements.maxYObstacle.textContent = __maxY;
+        this.elements.minXObstacle.textContent = __minX;
+        this.elements.minYObstacle.textContent = __minY;
+
+        // Return only when i need :/
+        if (needThisValues) {
+            return { minx: __minX, miny: __minY, maxx: __maxX, maxy: __maxY };
+        }
+    }
+
+    #validateMinAndMax() {
+        console.log('Inside Validate MIND AND MAX');
+
+        const __elements = this.#getFormElements();
+        let ok = true;
+        let msg = '';
+
+        const xValue = parseFloat(__elements.inpx.value);
+        const yValue = parseFloat(__elements.inpy.value);
+        const minAndMax = this.#addLimitsAttributtes(true);
+
+        if (xValue > minAndMax.maxx) {
+            ok = false;
+            msg += `The value of <span class='text-warning'>X</span> should be less that <span class='text-warning'>${minAndMax.maxx}</span><br>`;
+        } else if (xValue < minAndMax.minx) {
+            ok += false;
+            msg += `The value of <span class='text-warning'>X</span> should be greather that <span class='text-warning'>${minAndMax.minx}</span><br>`;
+        }
+
+        if (yValue > minAndMax.maxy) {
+            ok = false;
+            msg += `The value of <span class='text-warning'>Y</span> should be less that <span class='text-warning'>${minAndMax.maxy}</span><br>`;
+        } else if (yValue < minAndMax.miny) {
+            ok = false;
+            msg += `The value of <span class='text-warning'>Y</span> should be greather that <span class='text-warning'>${minAndMax.miny}</span><br>`;
+        }
+
+        if (msg != '') {
+            this.#showSpanError(msg);
+        }
+
+        return ok;
+    }
+
     /**
      * Format data (Remove the road from formData)
      * @param {Object} data Data to format
@@ -187,7 +264,7 @@ export default class ObstaclesController {
     #showSpanError(error) {
         // Show the divError and add the ERROR
         this.elements.divError.classList.remove('visually-hidden');
-        this.elements.divError.textContent = error;
+        this.elements.divError.innerHTML = error;
     }
 
     /**
@@ -240,14 +317,25 @@ export default class ObstaclesController {
         });
     }
 
+    #getFormElements() {
+        const __inputX = document.querySelector('#obstacle-x');
+        const __inputY = document.querySelector('#obstacle-y');
+        const __types = document.querySelector('#types-obtacles');
+
+        return { inpx: __inputX, inpy: __inputY, type: __types };
+    }
+
     /**
      * Get the data from the obstacles form
      */
     #getFormData() {
         try {
-            const valX = parseFloat(document.querySelector('#obstacle-x').value);
-            const valY = parseFloat(document.querySelector('#obstacle-y').value);
-            const typeObstacle = document.querySelector('#types-obtacles');
+            const __elements = this.#getFormElements();
+
+            const valX = parseFloat(__elements.inpx.value);
+            const valY = parseFloat(__elements.inpy.value);
+            const typeObstacle = __elements.type;
+
             const typeIndex = typeObstacle.selectedIndex;
 
             // Get the "text" from the option selected

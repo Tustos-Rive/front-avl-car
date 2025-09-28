@@ -1,19 +1,20 @@
-<div class="screen-watch-roads" id="watch-roads">
-    <div class="row buttons-watch btn-group">
-        <div class="col-4 mx-2">
-            <button class="btn btn-primary" id="btn-pre">Pre&minus;Order</button>
-        </div>
-        <div class="col-4 mx-2">
-            <button class="btn btn-primary" id="btn-in">In&minus;Order</button>
-        </div>
-        <div class="col-4 mx-2">
-            <button class="btn btn-primary" id="btn-pos">Pos&minus;Order</button>
-        </div>
+<link rel="stylesheet" href="./app/assets/css/watchRoads.css" />
+<div class="screen-watch-roads h-100 mb-2" id="watch-roads">
+    <div class="row header-initial header text-center w-100">
+        <h1>Watch Roads</h1>
+    </div>
+
+    <div class="buttons-watch btn-group w-100 mb-2" role="group">
+        <button class="btn btn-primary" id="btn-pre">Pre&minus;Order</button>
+
+        <button class="btn btn-primary mx-2" id="btn-in">In&minus;Order</button>
+
+        <button class="btn btn-primary ms-1" id="btn-pos">Pos&minus;Order</button>
     </div>
 
     <!-- Tree Container/Render -->
-    <div class="row w-100 h-100 mw-100 mh-100 pb-4">
-        <div class="no-scrollbars tree-rendered h-100" id="tree-render">
+    <div class="row border border-2 border-primary w-100 mw-100 pb-4 tree-render-container">
+        <div id="tree-render">
             <svg id="tree-svg"></svg>
         </div>
     </div>
