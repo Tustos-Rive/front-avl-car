@@ -12,6 +12,25 @@ export default class Obstacle extends ObstacleI {
         this.x = data.x;
         this.y = data.y;
         this.type = data.type;
+
+        this.format_values();
+    }
+
+    format_values(is_type_str = false) {
+        const __type = OBSTACLES_TYPES.find((obs) => {
+            // Compare str values (type === type)
+            if (is_type_str === true) {
+                return obs.type === this.type;
+            }
+            // Compare type_id with type (int both!)
+            else {
+                return obs.id === this.type;
+            }
+        });
+
+        const __type_name = __type.type;
+
+        this.type = __type_name;
     }
 
     // validateCoordinates() {

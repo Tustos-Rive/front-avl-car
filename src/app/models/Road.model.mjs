@@ -2,8 +2,7 @@ import RoadI from '../interfaces/Road.interface.mjs';
 
 export default class Road extends RoadI {
     constructor(sizesObj) {
-        super();
-
+        super()
         this.top = 0;
         this.height = 0;
         this.width = 0;
@@ -35,5 +34,15 @@ export default class Road extends RoadI {
 
     getObstacles() {
         return this.obstacles;
+    }
+
+    // FIXME: This function not func... Fix, don't found nothing!
+    getObstacleById(id) {
+        let obstacle = null;
+
+        // TODO: Find the obstacle!
+        obstacle = this.obstacles.find((node) => node.id === id);
+
+        return obstacle;
     }
 }
