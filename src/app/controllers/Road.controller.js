@@ -7,6 +7,10 @@ export default class RoadController {
     #modalMenu;
     #roadWidth;
 
+    constructor(treeService = null) {
+        this.treeService = treeService;
+    }
+
     async init(menu = true) {
         if (menu === true) {
             const menuHML = await Helpers.fetchText('./app/assets/html/roadAddMenu.html');
@@ -25,6 +29,11 @@ export default class RoadController {
             });
 
             this.#modalMenu.show();
+
+            // Prevent send when press enter or similar... enter dispatch "submit" event in forms
+            document.querySelector(`#${this.#modalMenu.id} #form-create-road`).addEventListener('submit', (ev) => {
+                ev.preventDefault();
+            });
         } else {
             // this.roadHtml = await RoadGame();
             // this.#innerRoad();
@@ -44,14 +53,19 @@ export default class RoadController {
                 return;
             }
 
-            this.#roadWidth = parseFloat(document.querySelector('#inp-road-width').value);
             Toast.show({ message: 'Road created succesfully!', mode: 'success' });
+            this.road = new Road(this.#getSizes());
+
+            // Sent event to reset avl (to no confuse...)
+            this.treeService.emit_reset_avl();
+
+            console.log('Tree reseted!!!');
+
+            // ROAD_MODEL.init(this.#getSizes);
 
             // Dispatch event to can continue with others proccess
             document.dispatchEvent(new CustomEvent('road-created'));
             this.#closeMenu();
-
-            this.road = new Road(this.#getSizes());
         } catch (e) {
             Toast.show({ message: 'Has happend something when try create Road.', mode: 'danger', error: e });
         }
@@ -72,6 +86,7 @@ export default class RoadController {
     #getSizes() {
         const roadDivStyles = getComputedStyle(this.#roadDiv);
 
+        const roadWidth = parseFloat(document.querySelector('#inp-road-width').value);
         const heightRoad = OwnUtils.fromPixelsToNumber(roadDivStyles.height);
         let topPositionRoad = OwnUtils.fromPixelsToNumber(roadDivStyles.top);
 
@@ -79,6 +94,6 @@ export default class RoadController {
             topPositionRoad = 0;
         }
 
-        return { width: this.#roadWidth, height: heightRoad, top: topPositionRoad };
+        return { width: roadWidth, height: heightRoad, top: topPositionRoad };
     }
 }

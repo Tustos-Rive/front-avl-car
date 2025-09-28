@@ -51,6 +51,9 @@ export default class ObstaclesController {
             firstOption: 'Select Type',
         });
 
+        // Set a global variable to know obstacles type
+        window.OBSTACLES_TYPES = response.data;
+
         this.#makeModal();
         this.#showMenu();
     }
@@ -141,13 +144,18 @@ export default class ObstaclesController {
                         this.elements.divError.classList.add('visually-hidden');
                     }
 
+                    // Set the new tree
+                    // Tell to AVLController that i add one obstacle
+                    // And should get tree again (UPDATED)
+                    this.AVLController.getTree();
+
                     // Set the ID obtained from the backend!
                     this.obstacleObj.id = req.data;
 
                     // FIXME: I think this is ok, but, fix after tests
                     this.roadController.getRoad().setObstacle(this.obstacleObj);
 
-                    console.log(this.obstacleObj);
+                    console.log(req);
                     console.log(this.roadController.getRoad());
                     // await this.AVLController.send_roads_to_backend();
 
@@ -208,21 +216,6 @@ export default class ObstaclesController {
      */
     async #callServiceSendData(data) {
         return await this.AVLController.send_roads_to_backend(data);
-        // For testing
-        // TODO: Call the service
-
-        // return new Promise((resolve, reject) => {
-        //     console.log('Sending this data: ', data);
-
-        //     let res = { status: 200, error: 'Already exists an obstacle in the same coordinates!' };
-
-        //     let timeout = setTimeout(() => {
-        //         timeout = null;
-        //         console.log('Res: ', res);
-
-        //         resolve(res);
-        //     }, 1000);
-        // });
     }
 
     #showToastInfo() {

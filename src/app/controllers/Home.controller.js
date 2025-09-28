@@ -1,3 +1,4 @@
+import TreeService from '../services/Tree.service.js';
 import AVLController from './AVL.controller.js';
 import ObstaclesController from './Obstacles.controller.js';
 import RoadController from './Road.controller.js';
@@ -6,6 +7,7 @@ export default class HomeController {
     #controllers;
     async init() {
         this.#controllers = {};
+        this.treeService = new TreeService();
 
         // To try fix have 2 obstacles dialogs/menus
         // This controle if the event that creates road is ALREADY called or not
@@ -25,6 +27,13 @@ export default class HomeController {
         this.elements.btnWatchRoads = document.querySelector('#btn-watch-roads');
 
         this.#addListeners();
+
+        // Reset backend AVL data
+        this.__emitResetTree();
+    }
+
+    __emitResetTree() {
+        this.treeService.emit_reset_avl();
     }
 
     async #loadHML() {
@@ -53,7 +62,9 @@ export default class HomeController {
                     this.elements.btnInsertObstacles.click();
                 } else {
                     // By now, just get the road in order, after, create the menu ROADS!
-                    this.#controllers.AVL.service.emit_get_road_inorder();
+                    // this.#controllers.AVL.service.emit_get_road('preorder');
+                    this.#controllers.AVL.service.emit_get_road('inorder');
+                    // this.#controllers.AVL.service.emit_get_road('posorder');
                 }
             } catch (e) {}
         });
@@ -75,10 +86,16 @@ export default class HomeController {
         this.elements.btnInsertObstacles.addEventListener('click', async (ev) => {
             // FIXME: Make more clean this, see logic again!
             try {
-                // FIXME: Check if this is OK
-                this.#controllers.AVL = new AVLController(this.#controllers.Road);
+                if (!this.#controllers.AVL) {
+                    this.#controllers.AVL = new AVLController(this.#controllers.Road);
+                }
 
-                this.#controllers.Obstacles = new ObstaclesController();
+                if (!this.#controllers.Obstacles) {
+                    this.#controllers.Obstacles = new ObstaclesController();
+                }
+
+                // Set the obstacle controller to the AVLController
+                // this.#controllers.AVL.setObstacleController(this.#controllers.Obstacles);
 
                 // Send AVL controller to Obstacles, every time add obstacle call...
                 await this.#controllers.Obstacles.init(this.#controllers.Road, this.#controllers.AVL);
@@ -100,7 +117,11 @@ export default class HomeController {
     #listernerBtnCreateRoad() {
         this.elements.btnCreateRoad.addEventListener('click', async (ev) => {
             try {
-                this.#controllers.Road = new RoadController();
+                // Evit overwrite!
+                if (!this.#controllers.Road) {
+                    this.#controllers.Road = new RoadController(this.treeService);
+                }
+
                 await this.#controllers.Road.init();
 
                 // If this event IS NOT called, call...
