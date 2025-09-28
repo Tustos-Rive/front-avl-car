@@ -3,28 +3,45 @@ import TreeService from '../services/Tree.service.js';
 
 import TreeRender from '../components/tree/treeRender.mjs';
 import Obstacle from '../models/Obstacle.model.mjs';
+import OwnUtils from '../utils/own/own.mjs';
 
 export default class AVLController {
     constructor(roadCtrl) {
         this.avl = new AVL();
         this.service = new TreeService();
         this.roadController = roadCtrl;
-        this.htmlCtnSGVAVL = TreeRender();
+        this.html = TreeRender();
+
+        this.init();
+    }
+
+    init() {
+        this.__loadHTML();
 
         // this.obstacleController = null;
 
-        this.containerTree = document.querySelector('#tree-wrap');
+        // this.containerTree = document.querySelector('#tree-wrap');
 
         this.renderedTreeContainer = document.querySelector('#tree-render');
 
-        this.renderedTreeContainer.innerHTML = this.htmlCtnSGVAVL;
+        // this.renderedTreeContainer.innerHTML = this.htmlCtnSGVAVL;
 
         this.treeSVGContainer = document.querySelector('#tree-svg');
 
+        this.stylesTreeContainer = getComputedStyle(this.renderedTreeContainer);
         this.stylesTreeSVGCtn = getComputedStyle(this.treeSVGContainer);
 
         // Add listener to document for when get the tree
         this.listenGetTreeFromBackend();
+    }
+
+    __loadHTML() {
+        const __main = document.querySelector('main');
+
+        // Add only when don't already exists!
+        if (!document.querySelector('#tree-render')) {
+            __main.insertAdjacentHTML('afterbegin', this.html);
+        }
     }
 
     // FIXME: Really I go here???
@@ -106,6 +123,10 @@ export default class AVLController {
         // return current;
     }
 
+    getRoadCtrl() {
+        return this.roadController;
+    }
+
     /**
      * Send event get Tree to the backend
      */
@@ -119,7 +140,7 @@ export default class AVLController {
         // const road = this.roadController.getRoad();
 
         if (data.root) {
-            this.containerTree.classList.remove('visually-hidden');
+            // this.containerTree.classList.remove('visually-hidden');
             /* ---------- Renderizado del Árbol con D3.js ---------- */
             this.__elementoSVG = d3.select('#tree-svg');
 
@@ -141,7 +162,10 @@ export default class AVLController {
             // this.__elementoSVG.attr('viewBox', [-10, -10, this.__anchoSVG, this.__altoSVG]); //flagViewBox.w, flagViewBox.h]);
 
             // 'g' es un elemento SVG de grupo, que funciona como un contenedor para otros elementos.
-            this.__grupoPrincipalSVG = this.__elementoSVG.append('g').attr('transform', 'translate(100,100)');
+            const ctnWidth = OwnUtils.fromPixelsToNumber(this.stylesTreeContainer.width.replace('px', ''));
+            const ctnHeight = OwnUtils.fromPixelsToNumber(this.stylesTreeContainer.height.replace('px', ''));
+
+            this.__grupoPrincipalSVG = this.__elementoSVG.append('g').attr('transform', `translate(${ctnWidth / 2 - 300}, 100)`);
 
             this.__render(data.root);
         }
@@ -155,8 +179,6 @@ export default class AVLController {
         // D3 necesita una estructura jerárquica para poder dibujar el árbol.
         const raizJerarquia = d3.hierarchy(data);
 
-        console.log('Raiz Jerarquia <=> ', raizJerarquia);
-
         // Hacemos el SVG más ancho si el árbol tiene muchos nodos para que no se amontonen.
         const cantidadNodos = raizJerarquia.descendants().length;
         const anchoDinamico = Math.max(800, cantidadNodos * 60);
@@ -165,12 +187,12 @@ export default class AVLController {
         this.__elementoSVG.attr('height', altoDinamico);
 
         // Configuramos el layout del árbol para que D3 calcule las posiciones de cada nodo y línea.
-        const diseñoArbol = d3
+        const treeDesign = d3
             .tree()
-            .size([anchoDinamico - 160, this.__altoSVG - 160])
+            .size([anchoDinamico - 160, 300]) //this.__altoSVG - 160])
             .separation((a, b) => (a.parent === b.parent ? 1.4 : 2.2));
 
-        diseñoArbol(raizJerarquia); // Aplicamos el layout a nuestros datos.
+        treeDesign(raizJerarquia); // Aplicamos el layout a nuestros datos.
 
         // Dibujar las líneas (enlaces) entre nodos.
         this.__grupoPrincipalSVG
@@ -194,7 +216,10 @@ export default class AVLController {
             .attr('class', 'node')
             .attr('transform', (nodo) => `translate(${nodo.x},${nodo.y})`);
 
-        nodosVisuales.append('circle').attr('r', 25);
+        nodosVisuales
+            .append('circle')
+            .attr('r', 25)
+            .attr('id', (node) => `_${node.data.id}`);
         nodosVisuales.append('image').attr('xlink:href', (node) => `./app/assets/img/svg/${node.data.type.toLowerCase()}.svg`);
         nodosVisuales.append('text').text((nodo) => `(${nodo.data.x}, ${nodo.data.y})`);
 

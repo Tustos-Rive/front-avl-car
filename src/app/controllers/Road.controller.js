@@ -3,7 +3,7 @@ import Road from '../models/Road.model.mjs';
 import OwnUtils from '../utils/own/own.mjs';
 
 export default class RoadController {
-    #roadDiv;
+    #containerMain;
     #modalMenu;
     #roadWidth;
 
@@ -14,8 +14,12 @@ export default class RoadController {
     async init(menu = true) {
         if (menu === true) {
             const menuHML = await Helpers.fetchText('./app/assets/html/roadAddMenu.html');
-            this.containerRoad = document.querySelector('#road-game');
-            this.#roadDiv = document.querySelector('#road-container');
+            // this.containerMain = document.querySelector('#road-game');
+            // To can get container road HEIGHT
+            await this.#innerRoad();
+
+            this.#containerMain = document.querySelector('#road-container');
+            // this.#roadDiv = document.querySelector('#road-container');
 
             this.#modalMenu = new Modal({
                 modal: false,
@@ -75,8 +79,14 @@ export default class RoadController {
         return this.road;
     }
 
-    #innerRoad() {
-        this.containerRoad.innerHTML = this.roadHtml;
+    async #innerRoad() {
+        try {
+            const html = await Helpers.fetchText('./app/assets/html/road.html');
+            document.querySelector('main').insertAdjacentHTML('afterbegin', html);
+        } catch (error) {
+            console.error(error);
+        }
+        // this.containerMain.innerHTML = this.roadHtml;
     }
 
     /**
@@ -84,11 +94,13 @@ export default class RoadController {
      * @returns An object that contains width, height and top sizes of road
      */
     #getSizes() {
-        const roadDivStyles = getComputedStyle(this.#roadDiv);
+        console.log(this.#containerMain);
+
+        const containerMainStyles = getComputedStyle(this.#containerMain);
 
         const roadWidth = parseFloat(document.querySelector('#inp-road-width').value);
-        const heightRoad = OwnUtils.fromPixelsToNumber(roadDivStyles.height);
-        let topPositionRoad = OwnUtils.fromPixelsToNumber(roadDivStyles.top);
+        const heightRoad = OwnUtils.fromPixelsToNumber(containerMainStyles.height);
+        let topPositionRoad = OwnUtils.fromPixelsToNumber(containerMainStyles.top);
 
         if (isNaN(topPositionRoad)) {
             topPositionRoad = 0;
