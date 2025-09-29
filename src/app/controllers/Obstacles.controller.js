@@ -5,7 +5,7 @@ import ObstacleService from '../services/Obstacles.service.js';
 // TODO: The road should be created before this, because this requires the fucking road width/height
 
 export default class ObstaclesController {
-    async init(roadCtrl, AVLCtrl) {
+    async init(roadCtrl, AVLCtrl, homeCtrl = null) {
         if (!roadCtrl) {
             throw new Error('Missing Road');
         }
@@ -16,6 +16,7 @@ export default class ObstaclesController {
 
         this.roadController = roadCtrl;
         this.AVLController = AVLCtrl;
+        this.homeController = homeCtrl;
 
         // Obstacles instancies (model and service)
         this.obstacleObj = null;
@@ -160,7 +161,12 @@ export default class ObstaclesController {
                     this.obstacleObj.id = req.data;
 
                     // FIXME: I think this is ok, but, fix after tests
-                    this.roadController.getRoad().setObstacle(this.obstacleObj);
+                    const road = this.roadController.getRoad();
+                    road.setObstacle(this.obstacleObj);
+
+                    if (road.getObstacles().length > 0) {
+                        this.homeController.disableEnable(['btnWatchRoads'], true);
+                    }
 
                     // await this.AVLController.send_roads_to_backend();
 
