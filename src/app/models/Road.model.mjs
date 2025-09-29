@@ -2,7 +2,7 @@ import RoadI from '../interfaces/Road.interface.mjs';
 
 export default class Road extends RoadI {
     constructor(sizesObj) {
-        super()
+        super();
         this.top = 0;
         this.height = 0;
         this.width = 0;
@@ -34,6 +34,15 @@ export default class Road extends RoadI {
 
     getObstacles() {
         return this.obstacles;
+    }
+
+    removeObstacle(coordinates) {
+        // const __obstacle = this.getObstacleById(id)
+        const __index = this.obstacles.findIndex((obs) => obs.x === coordinates.x && obs.y === coordinates.y);
+
+        if (__index >= 0) {
+            this.obstacles.splice(__index, 1);
+        }
     }
 
     // FIXME: This function not func... Fix, don't found nothing!

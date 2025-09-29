@@ -1,5 +1,7 @@
 // TODO: Add button to return to Home
 
+import DeleteObstacle from '../components/tree/deleteObstacle.mjs';
+
 export default class WatchRoadsController {
     constructor(avlCtrl, homeCtrl) {
         if (!avlCtrl) {
@@ -18,7 +20,6 @@ export default class WatchRoadsController {
         try {
             await this.__cleanMain();
             await this.__callRenderTree();
-            this.__getElements();
             this.__callListeners();
         } catch (e) {
             console.error(e);
@@ -40,6 +41,9 @@ export default class WatchRoadsController {
                         // Reject with error message
                         reject('Not data from backend!');
                     }
+
+                    // Get elements from the HTML
+                    this.__getElements();
 
                     // Resolve with the data!
                     resolve(ev);
@@ -66,6 +70,7 @@ export default class WatchRoadsController {
             this.__addListener(this.elements.btnInOrder, 'click', this.__in.bind(this));
             this.__addListener(this.elements.btnPosOrder, 'click', this.__pos.bind(this));
             this.__addListener(this.elements.btnBack, 'click', this.__goBack.bind(this));
+            this.__addListener(this.elements.btnDelete, 'click', this.__deleteObstacle.bind(this));
 
             // Events From The Backend
             this.__addListener(document, 'pre-order', this.__eventRoadFocus.bind(this));
@@ -90,6 +95,7 @@ export default class WatchRoadsController {
             this.elements.btnInOrder = document.querySelector('#btn-in');
             this.elements.btnPosOrder = document.querySelector('#btn-pos');
             this.elements.btnBack = document.querySelector('#btn-back');
+            this.elements.btnDelete = document.querySelector('#btn-del');
         } catch (e) {
             console.error(e);
         }
@@ -115,6 +121,7 @@ export default class WatchRoadsController {
     // Remove all current classe from nodes visited
     __resetFocusAll() {
         const __keyID = Object.keys(this.elements.obstacles);
+
         __keyID.forEach((obs) => {
             const current = this.elements.obstacles[obs];
             const currentClasses = current.classList;
@@ -143,6 +150,10 @@ export default class WatchRoadsController {
         // Call home init to clean this section and simulate that go back!
         // The context varibales and others not lost! is the same...
         this.homeCtrl.init(true);
+    }
+
+    __deleteObstacle(ev) {
+        this.deleteObstacle = DeleteObstacle.init(this.avlCtrl);
     }
 
     __focusNodeInRoad(id) {

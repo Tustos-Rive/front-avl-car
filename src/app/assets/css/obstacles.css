@@ -7,7 +7,7 @@ g image {
     /* position: absolute; */
     x: -15.5;
     y: -15;
-    filter: drop-shadow(0px 0px 1px #5900ffbd);
+    filter: drop-shadow(0px 0px 1px #00a2ffbd);
 }
 
 g text {
@@ -15,12 +15,13 @@ g text {
 }
 
 .node circle {
-    fill: #10002e;
+    fill: #5600f55d;
     stroke: #fff;
     stroke-width: 1px;
 }
 
 .node text {
+    filter: drop-shadow(1px 1px 1px rgb(0, 0, 0));
     fill: white;
     font-size: 12px;
     text-anchor: middle;
@@ -28,7 +29,7 @@ g text {
 }
 
 .link {
-    stroke: #999;
+    stroke: #002fff6e;
     stroke-width: 2px;
     fill: none;
 }
