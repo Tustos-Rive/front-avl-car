@@ -80,19 +80,6 @@ export default class AVLController {
     listenGetTreeFromBackend() {
         document.addEventListener('avl_tree_balanced', () => {});
         document.addEventListener('avl_tree_balanced', (event) => {
-            // // Validate if backend sent any data
-            // if (event.detail) {
-            //     this.avl.root = null;
-            //     // Root will be the node/obstacle ID
-            //     this.avl.root = event.detail;
-
-            //     // TODO: the obstacle is just id, should be a JSON/Object, x,y,type
-            //     this.formatNodes();
-
-            //     // TODO: render tree
-            //     this.__renderTree(this.avl);
-            // }
-
             this.initDataTree(event);
         });
     }

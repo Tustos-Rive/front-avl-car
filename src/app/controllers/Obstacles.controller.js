@@ -53,7 +53,7 @@ export default class ObstaclesController {
         });
 
         // Set a global variable to know obstacles type
-        window.OBSTACLES_TYPES = response.data;
+        // window.OBSTACLES_TYPES = response.data;
 
         this.#makeModal();
         this.#showMenu();

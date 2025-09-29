@@ -9,6 +9,7 @@ export default class RoadController {
 
     constructor(treeService = null) {
         this.treeService = treeService;
+        this.road = new Road();
     }
 
     async init(menu = true) {
@@ -58,7 +59,7 @@ export default class RoadController {
             }
 
             Toast.show({ message: 'Road created succesfully!', mode: 'success' });
-            this.road = new Road(this.#getSizes());
+            this.road.setSizes(this.#getSizes());
 
             // Sent event to reset avl (to no confuse...)
             this.treeService.emit_reset_avl();

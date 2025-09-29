@@ -4,10 +4,13 @@ export default class Road extends RoadI {
     constructor(sizesObj) {
         super();
         this.top = 0;
-        this.height = 0;
-        this.width = 0;
+        this.height = 300;
+        this.width = 500;
         this.obstacles = [];
-        this.setSizes(sizesObj);
+
+        if (sizesObj) {
+            this.setSizes(sizesObj);
+        }
     }
 
     setSizes(sizesObj) {
@@ -34,6 +37,10 @@ export default class Road extends RoadI {
 
     getObstacles() {
         return this.obstacles;
+    }
+
+    setWidth(w) {
+        this.width = w;
     }
 
     removeObstacle(coordinates) {

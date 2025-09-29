@@ -1,5 +1,6 @@
 import TreeService from '../services/Tree.service.js';
 import AVLController from './AVL.controller.js';
+import LoadJSONController from './LoadJson.controller.js';
 import ObstaclesController from './Obstacles.controller.js';
 import RoadController from './Road.controller.js';
 import WatchRoadsController from './WatchRoads.controller.js';
@@ -18,10 +19,6 @@ export default class HomeController {
         // This controle if the event that creates road is ALREADY called or not
         this.alreadyListenRoadCreated = false;
 
-        // TODO: Load start screen, contains the initial menu
-        // TODO: When click PLAY button, to start game, appears a menu that give the road width (Distance),
-        // and if don't have obstacles, show menu to add obstacles!
-        // this.containerMain = document.querySelector('#start-screen');
         this.containerMain = document.querySelector('main');
         await this.#loadHML();
 
@@ -56,6 +53,7 @@ export default class HomeController {
             // this.#listenerBtnSound();
             this.disableEnable();
 
+            this.#listenerBtnLoadJSON();
             this.#listernerBtnCreateRoad();
             this.#listernerBtnObstacles();
             await this.#listenerBtnWatchRoads();
@@ -75,11 +73,29 @@ export default class HomeController {
                 return;
             }
 
-            if (element.id !== 'btn-create-road' && enable === false) {
+            if (element.id !== 'btn-create-road' && element.id !== 'btn-load-json' && enable === false) {
                 element.setAttribute('disabled', true);
             } else {
                 element.removeAttribute('disabled');
             }
+        });
+    }
+
+    #listenerBtnLoadJSON() {
+        this.elements.btnLoadJson.addEventListener('click', async (ev) => {
+            if (!this.controllers.Road) {
+                this.controllers.Road = new RoadController(this.treeService);
+            }
+
+            if (!this.controllers.AVL) {
+                this.controllers.AVL = new AVLController(this.controllers.Road);
+            }
+
+            if (!this.controllers.LoadJSON) {
+                this.controllers.LoadJSON = new LoadJSONController(this.controllers.AVL, this);
+            }
+
+            this.controllers.LoadJSON.init();
         });
     }
 
@@ -159,7 +175,6 @@ export default class HomeController {
                 }
 
                 await this.controllers.Road.init();
-
                 // Enable obstacles add Button
                 this.disableEnable(['btnInsertObstacles'], true);
 
