@@ -66,8 +66,6 @@ export default class TreeService extends SocketService {
 
     on_avl_reseted() {
         this.socketio.on('avl_reseted', (ev) => {
-            // console.log('AVL Reseted road: ', ev);
-
             const data = ev.data ?? {};
             const event = new CustomEvent('avl_reseted', { detail: data });
             document.dispatchEvent(event);
@@ -92,5 +90,9 @@ export default class TreeService extends SocketService {
 
     emit_reset_avl(data = {}) {
         this.socketio.emit('reset_avl', data);
+    }
+
+    emit_remove_obstacle(data = {}) {
+        this.socketio.emit('remove_obstacle', data);
     }
 }

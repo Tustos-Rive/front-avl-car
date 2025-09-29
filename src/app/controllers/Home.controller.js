@@ -5,10 +5,10 @@ import RoadController from './Road.controller.js';
 import WatchRoadsController from './WatchRoads.controller.js';
 
 export default class HomeController {
-    #controllers;
+    controllers;
     async init(isReload = false) {
-        if (!this.#controllers) {
-            this.#controllers = {};
+        if (!this.controllers) {
+            this.controllers = {};
             this.treeService = new TreeService();
             // Reset backend AVL data
             this.__emitResetTree();
@@ -31,13 +31,14 @@ export default class HomeController {
         this.elements.btnInsertObstacles = document.querySelector('#btn-insert-obstacles');
         this.elements.btnCreateRoad = document.querySelector('#btn-create-road');
         this.elements.btnWatchRoads = document.querySelector('#btn-watch-roads');
+        this.elements.btnPlay = document.querySelector('#btn-play');
+        this.elements.btnLoadJson = document.querySelector('#btn-load-json');
 
         await this.#addListeners();
 
         if (isReload === true) {
             // Said that "is reload"
-            this.#controllers.AVL.init(true);
-            // this.#controllers.AVL.getTree();
+            this.controllers.AVL.init(true);
         }
     }
 
@@ -47,13 +48,14 @@ export default class HomeController {
 
     async #loadHML() {
         const html = await Helpers.fetchText('./app/assets/html/home.html');
-        // this.containerMain.innerHTML = html;
         this.containerMain.innerHTML = html;
     }
 
     async #addListeners() {
         try {
             // this.#listenerBtnSound();
+            this.disableEnable();
+
             this.#listernerBtnCreateRoad();
             this.#listernerBtnObstacles();
             await this.#listenerBtnWatchRoads();
@@ -62,24 +64,43 @@ export default class HomeController {
         }
     }
 
+    disableEnable(customs = null, enable = false) {
+        const __keys = customs ?? Object.keys(this.elements);
+
+        // Disable all initally, the user don't could create not Initalized objects
+        __keys.forEach((key) => {
+            const element = this.elements[key];
+
+            if (!element) {
+                return;
+            }
+
+            if (element.id !== 'btn-create-road' && enable === false) {
+                element.setAttribute('disabled', true);
+            } else {
+                element.removeAttribute('disabled');
+            }
+        });
+    }
+
     // FIXME: Fix this... Add emenu :/
     async #listenerBtnWatchRoads() {
+        if (this.controllers.Obstacles || this.controllers.AVL) {
+            this.disableEnable(['btnWatchRoads'], true);
+        }
+
         this.elements.btnWatchRoads.addEventListener('click', async (ev) => {
             try {
                 // Show menu to create obstacles (Don't have obstacles...)
-                if (!this.#controllers.AVL) {
+                if (!this.controllers.AVL) {
                     Toast.show({ message: 'First You should create the <span class="text-warning">Obstacles</span>. <span class="text-info">Opening Menu</span>...' });
                     this.elements.btnInsertObstacles.click();
                 } else {
-                    if (!this.#controllers.WatchRoads) {
-                        this.#controllers.WatchRoads = new WatchRoadsController(this.#controllers.AVL, this);
+                    if (!this.controllers.WatchRoads) {
+                        this.controllers.WatchRoads = new WatchRoadsController(this.controllers.AVL, this);
                     }
 
-                    await this.#controllers.WatchRoads.init();
-                    // By now, just get the road in order, after, create the menu ROADS!
-                    // this.#controllers.AVL.service.emit_get_road('preorder');
-                    // this.#controllers.AVL.service.emit_get_road('inorder');
-                    // this.#controllers.AVL.service.emit_get_road('posorder');
+                    await this.controllers.WatchRoads.init();
                 }
             } catch (e) {}
         });
@@ -98,22 +119,22 @@ export default class HomeController {
     }
 
     #listernerBtnObstacles() {
+        if (this.controllers.Road) {
+            this.disableEnable(['btnInsertObstacles'], true);
+        }
         this.elements.btnInsertObstacles.addEventListener('click', async (ev) => {
             // FIXME: Make more clean this, see logic again!
             try {
-                if (!this.#controllers.AVL) {
-                    this.#controllers.AVL = new AVLController(this.#controllers.Road);
+                if (!this.controllers.AVL) {
+                    this.controllers.AVL = new AVLController(this.controllers.Road);
                 }
 
-                if (!this.#controllers.Obstacles) {
-                    this.#controllers.Obstacles = new ObstaclesController();
+                if (!this.controllers.Obstacles) {
+                    this.controllers.Obstacles = new ObstaclesController();
                 }
-
-                // Set the obstacle controller to the AVLController
-                // this.#controllers.AVL.setObstacleController(this.#controllers.Obstacles);
 
                 // Send AVL controller to Obstacles, every time add obstacle call...
-                await this.#controllers.Obstacles.init(this.#controllers.Road, this.#controllers.AVL);
+                await this.controllers.Obstacles.init(this.controllers.Road, this.controllers.AVL, this);
             } catch (e) {
                 Toast.show({ message: `${e.message}, first create a Road`, mode: 'warning', error: e });
 
@@ -133,11 +154,14 @@ export default class HomeController {
         this.elements.btnCreateRoad.addEventListener('click', async (ev) => {
             try {
                 // Evit overwrite!
-                if (!this.#controllers.Road) {
-                    this.#controllers.Road = new RoadController(this.treeService);
+                if (!this.controllers.Road) {
+                    this.controllers.Road = new RoadController(this.treeService);
                 }
 
-                await this.#controllers.Road.init();
+                await this.controllers.Road.init();
+
+                // Enable obstacles add Button
+                this.disableEnable(['btnInsertObstacles'], true);
 
                 // If this event IS NOT called, call...
                 if (this.alreadyListenRoadCreated === false) {
