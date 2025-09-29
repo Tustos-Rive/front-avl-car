@@ -58,18 +58,13 @@ class App {
         // window.io = io;
     }
 
-    // static #modelsReferences() {
-    //     window.ROAD_MODEL = new Road();
-    //     window.CAR_MODEL = new Car();
-    //     window.AVL_MODEL = new AVL();
-    // }
-
-    // static #controllersReferences() {}
-
     static async #globalVariables() {
         window.configs = await Helpers.fetchJSON('./app/assets/json/configs.json');
         window.URLAPI = configs.urlAPI;
         window.SOUND_ON = true;
+
+        const response = await Helpers.fetchJSON(`${URLAPI}/data/json/obstacles_types.json`);
+        window.OBSTACLES_TYPES = response.data;
     }
 
     static #buttonsReferences() {
@@ -79,44 +74,3 @@ class App {
         window.cancelButton = `${icons.x}<span>Cancel</span>`;
     }
 }
-
-// Tests Socket
-// let data = {};
-// let socketMain;
-
-// function runMain() {
-//     const element1 = document.querySelector('#tree-render');
-//     const btnShow = document.querySelector('#btn1');
-//     const btnHide = document.querySelector('#btn2');
-
-//     btnShow.addEventListener('click', () => {
-//         showE(element1);
-//     });
-
-//     btnHide.addEventListener('click', () => {
-//         hideE('#tree-render');
-//     });
-// }
-
-// function showE(container) {
-//     // Testing AVL, socket and others
-
-//     // let data = {};
-//     // const socketMain = new SocketService('#ws-connection', data);
-
-//     socketMain = new SocketService('#ws-connection', data);
-//     const html = TreeRender();
-
-//     // Insert html inside index.html, before error
-//     container.innerHTML = html;
-
-//     const avlTree = new AVL('#tree-svg');
-// }
-
-// function hideE(selector) {
-//     // Send close connection
-//     socketMain = null;
-
-//     const ctn = document.querySelector(`${selector}`);
-//     ctn.innerHTML = '';
-// }

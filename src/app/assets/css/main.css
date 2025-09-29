@@ -19,6 +19,14 @@
     src: url('../fonts/StreetDrips.otf');
 }
 
+body {
+    background-image: url('../img/gif/bg-1.gif');
+    background-position: 0 -40vh;
+    background-repeat: no-repeat;
+    background-attachment: local;
+    background-size: 100%;
+}
+
 a {
     text-decoration: none;
 }

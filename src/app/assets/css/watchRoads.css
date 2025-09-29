@@ -2,3 +2,7 @@
     height: 75vh;
     overflow: hidden;
 }
+
+body {
+    background-blend-mode: multiply !important;
+}
