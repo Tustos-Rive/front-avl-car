@@ -8,6 +8,13 @@ This project just Manage **Tree** and it's **Nodes**, I can't do the game!
 
 https://github.com/user-attachments/assets/e3291ff1-c863-4c9f-ba7e-fe87221e11a6
 
+# You can!
+
+- Add only new Data from a JSON File (Only new data, not **append**)
+- Add new obstacles in any case (If **create Road** or **Load JSON**)
+- Watch the **AVL Tree Roads** (**pre, in, pos** -- order)
+- Delete/Remove any node/obstacle (In the same view of roads)
+
 ## How Use?
 
 > [!IMPORTANT]
