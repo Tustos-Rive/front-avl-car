@@ -1,10 +1,13 @@
+// TODO: Add button to return to Home
+
 export default class WatchRoadsController {
-    constructor(avlCtrl) {
+    constructor(avlCtrl, homeCtrl) {
         if (!avlCtrl) {
             throw new Error('I need a Tree to work!');
         }
 
         this.avlCtrl = avlCtrl;
+        this.homeCtrl = homeCtrl;
 
         this.main = document.querySelector('main');
 
@@ -16,7 +19,6 @@ export default class WatchRoadsController {
             await this.__cleanMain();
             await this.__callRenderTree();
             this.__getElements();
-            console.log('Elemnts inside WatchRoads <=> ', this.elements);
             this.__callListeners();
         } catch (e) {
             console.error(e);
@@ -29,8 +31,9 @@ export default class WatchRoadsController {
 
             return new Promise((resolve, reject) => {
                 // Emit event to the backend to get tree
-                this.avlCtrl.service.emit_get_tree();
+                this.avlCtrl.getTree(); //.service.emit_get_tree();
 
+                document.removeEventListener('avl_tree_balanced', () => {});
                 // Await to backend emit event with the data
                 document.addEventListener('avl_tree_balanced', (ev) => {
                     if (!ev) {
@@ -42,8 +45,6 @@ export default class WatchRoadsController {
                     resolve(ev);
                 });
             });
-
-            // this.avlCtrl.__renderTree()
         } catch (e) {
             console.error(e);
         }
@@ -61,11 +62,10 @@ export default class WatchRoadsController {
 
     async __callListeners() {
         try {
-            console.log('calling listeners');
-
             this.__addListener(this.elements.btnPreOrder, 'click', this.__pre.bind(this));
             this.__addListener(this.elements.btnInOrder, 'click', this.__in.bind(this));
             this.__addListener(this.elements.btnPosOrder, 'click', this.__pos.bind(this));
+            this.__addListener(this.elements.btnBack, 'click', this.__goBack.bind(this));
 
             // Events From The Backend
             this.__addListener(document, 'pre-order', this.__eventRoadFocus.bind(this));
@@ -78,10 +78,8 @@ export default class WatchRoadsController {
 
     __getElements() {
         try {
-            // TODO: Get all nodes from road, and for each by it's ID
             const __allObstacles = this.avlCtrl.getRoadCtrl().getRoad().getObstacles();
 
-            // console.log(__allObstacles);
             this.elements.obstacles = {};
 
             __allObstacles.forEach((obs) => {
@@ -91,6 +89,7 @@ export default class WatchRoadsController {
             this.elements.btnPreOrder = document.querySelector('#btn-pre');
             this.elements.btnInOrder = document.querySelector('#btn-in');
             this.elements.btnPosOrder = document.querySelector('#btn-pos');
+            this.elements.btnBack = document.querySelector('#btn-back');
         } catch (e) {
             console.error(e);
         }
@@ -98,10 +97,6 @@ export default class WatchRoadsController {
 
     __addListener(element, event, callback) {
         try {
-            console.log('Element <=> ', element);
-            console.log('Event <=> ', event);
-            console.log('Callback <=> ', callback);
-
             // Listener
             element.addEventListener(event, (ev) => {
                 callback(ev);
@@ -133,13 +128,21 @@ export default class WatchRoadsController {
         this.__resetFocusAll();
         this.avlCtrl.service.emit_get_road('preorder');
     }
+
     __in(ev) {
         this.__resetFocusAll();
         this.avlCtrl.service.emit_get_road('inorder');
     }
+
     __pos(ev) {
         this.__resetFocusAll();
         this.avlCtrl.service.emit_get_road('posorder');
+    }
+
+    __goBack(ev) {
+        // Call home init to clean this section and simulate that go back!
+        // The context varibales and others not lost! is the same...
+        this.homeCtrl.init(true);
     }
 
     __focusNodeInRoad(id) {

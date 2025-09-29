@@ -29,7 +29,7 @@ export default class TreeService extends SocketService {
 
     on_obstacle_inserted() {
         this.socketio.on('obstacles_inserted', (ev) => {
-            console.log('Obstacle inserted: ', ev);
+            // console.log('Obstacle inserted: ', ev);
         });
     }
 
@@ -56,7 +56,7 @@ export default class TreeService extends SocketService {
 
     on_avl_tree_balanced() {
         this.socketio.on('avl_tree_balanced', (ev) => {
-            console.log('AVL From Backend: ', ev);
+            // console.log('AVL From Backend: ', ev);
 
             const data = ev.data ?? {};
             const event = new CustomEvent('avl_tree_balanced', { detail: data });
@@ -66,7 +66,7 @@ export default class TreeService extends SocketService {
 
     on_avl_reseted() {
         this.socketio.on('avl_reseted', (ev) => {
-            console.log('AVL Reseted road: ', ev);
+            // console.log('AVL Reseted road: ', ev);
 
             const data = ev.data ?? {};
             const event = new CustomEvent('avl_reseted', { detail: data });

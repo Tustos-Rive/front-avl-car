@@ -6,9 +6,13 @@ import WatchRoadsController from './WatchRoads.controller.js';
 
 export default class HomeController {
     #controllers;
-    async init() {
-        this.#controllers = {};
-        this.treeService = new TreeService();
+    async init(isReload = false) {
+        if (!this.#controllers) {
+            this.#controllers = {};
+            this.treeService = new TreeService();
+            // Reset backend AVL data
+            this.__emitResetTree();
+        }
 
         // To try fix have 2 obstacles dialogs/menus
         // This controle if the event that creates road is ALREADY called or not
@@ -30,8 +34,11 @@ export default class HomeController {
 
         await this.#addListeners();
 
-        // Reset backend AVL data
-        this.__emitResetTree();
+        if (isReload === true) {
+            // Said that "is reload"
+            this.#controllers.AVL.init(true);
+            // this.#controllers.AVL.getTree();
+        }
     }
 
     __emitResetTree() {
@@ -41,7 +48,7 @@ export default class HomeController {
     async #loadHML() {
         const html = await Helpers.fetchText('./app/assets/html/home.html');
         // this.containerMain.innerHTML = html;
-        this.containerMain.insertAdjacentHTML('afterbegin', html);
+        this.containerMain.innerHTML = html;
     }
 
     async #addListeners() {
@@ -65,7 +72,7 @@ export default class HomeController {
                     this.elements.btnInsertObstacles.click();
                 } else {
                     if (!this.#controllers.WatchRoads) {
-                        this.#controllers.WatchRoads = new WatchRoadsController(this.#controllers.AVL);
+                        this.#controllers.WatchRoads = new WatchRoadsController(this.#controllers.AVL, this);
                     }
 
                     await this.#controllers.WatchRoads.init();

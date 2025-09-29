@@ -162,8 +162,6 @@ export default class ObstaclesController {
                     // FIXME: I think this is ok, but, fix after tests
                     this.roadController.getRoad().setObstacle(this.obstacleObj);
 
-                    console.log(req);
-                    console.log(this.roadController.getRoad());
                     // await this.AVLController.send_roads_to_backend();
 
                     // Toast.show({ message: 'The obstacle was added!', mode: 'success' });
@@ -183,8 +181,6 @@ export default class ObstaclesController {
     }
 
     #addLimitsAttributtes(needThisValues = false) {
-        console.log('Inside Add Limits Attributes!');
-
         const __elements = this.#getFormElements();
 
         const __inputX = __elements.inpx;
@@ -219,8 +215,6 @@ export default class ObstaclesController {
     }
 
     #validateMinAndMax() {
-        console.log('Inside Validate MIND AND MAX');
-
         const __elements = this.#getFormElements();
         let ok = true;
         let msg = '';

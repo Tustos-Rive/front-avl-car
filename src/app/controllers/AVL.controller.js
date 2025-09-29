@@ -10,15 +10,18 @@ export default class AVLController {
         this.avl = new AVL();
         this.service = new TreeService();
         this.roadController = roadCtrl;
-        this.html = TreeRender();
 
         this.init();
     }
 
-    init() {
-        this.__loadHTML();
+    init(isReload = false) {
+        // this.__loadHTML();
 
         // this.obstacleController = null;
+
+        this.html = TreeRender();
+        this.__loadHTML();
+        // Clean svg
 
         // this.containerTree = document.querySelector('#tree-wrap');
 
@@ -27,12 +30,17 @@ export default class AVLController {
         // this.renderedTreeContainer.innerHTML = this.htmlCtnSGVAVL;
 
         this.treeSVGContainer = document.querySelector('#tree-svg');
+        this.treeSVGContainer.innerHTML = '';
 
         this.stylesTreeContainer = getComputedStyle(this.renderedTreeContainer);
         this.stylesTreeSVGCtn = getComputedStyle(this.treeSVGContainer);
 
         // Add listener to document for when get the tree
         this.listenGetTreeFromBackend();
+
+        if (isReload === true) {
+            this.getTree();
+        }
     }
 
     __loadHTML() {
@@ -44,7 +52,6 @@ export default class AVLController {
         }
     }
 
-    // FIXME: Really I go here???
     async send_roads_to_backend(data) {
         const __ROAD = this.roadController.getRoad();
 
@@ -71,16 +78,17 @@ export default class AVLController {
     }
 
     listenGetTreeFromBackend() {
+        document.addEventListener('avl_tree_balanced', () => {});
+
         document.addEventListener('avl_tree_balanced', (event) => {
             // Validate if backend sent any data
             if (event.detail) {
+                this.avl.root = null;
                 // Root will be the node/obstacle ID
                 this.avl.root = event.detail;
 
                 // TODO: the obstacle is just id, should be a JSON/Object, x,y,type
                 this.formatNodes();
-
-                console.log('AVL before render <=> ', this.avl);
 
                 // TODO: render tree
                 this.__renderTree(this.avl);
@@ -141,12 +149,13 @@ export default class AVLController {
 
         if (data.root) {
             // this.containerTree.classList.remove('visually-hidden');
-            /* ---------- Renderizado del Árbol con D3.js ---------- */
-            this.__elementoSVG = d3.select('#tree-svg');
 
             // I hate javascript and python!
             // Clean container SVG
             this.treeSVGContainer.innerHTML = '';
+
+            /* ---------- Renderizado del Árbol con D3.js ---------- */
+            this.__elementoSVG = d3.select('#tree-svg');
 
             // this.__anchoSVG = parseInt(this.__elementoSVG.style('width')) || 800;
             // this.__altoSVG = parseInt(this.__elementoSVG.style('height')) || 600;
@@ -162,10 +171,18 @@ export default class AVLController {
             // this.__elementoSVG.attr('viewBox', [-10, -10, this.__anchoSVG, this.__altoSVG]); //flagViewBox.w, flagViewBox.h]);
 
             // 'g' es un elemento SVG de grupo, que funciona como un contenedor para otros elementos.
-            const ctnWidth = OwnUtils.fromPixelsToNumber(this.stylesTreeContainer.width.replace('px', ''));
+            const ctnWidth = OwnUtils.fromPixelsToNumber(this.stylesTreeContainer.width.replace('px', '')) || 1000;
             const ctnHeight = OwnUtils.fromPixelsToNumber(this.stylesTreeContainer.height.replace('px', ''));
 
-            this.__grupoPrincipalSVG = this.__elementoSVG.append('g').attr('transform', `translate(${ctnWidth / 2 - 300}, 100)`);
+            // Try get g element to not duplicates
+            const existingG = this.__elementoSVG.select('g');
+
+            // When call reloads or i sumulate "Go Back" can duplicates if not sure...
+            if (existingG.empty()) {
+                this.__grupoPrincipalSVG = this.__elementoSVG.append('g').attr('transform', `translate(${ctnWidth / 2 - 300}, 100)`);
+            } else {
+                this.__grupoPrincipalSVG = existingG;
+            }
 
             this.__render(data.root);
         }
