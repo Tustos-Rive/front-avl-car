@@ -1,4 +1,4 @@
 {
-    "urlAPI": "http://127.0.0.1:4500",
-    "urlSOCKET": "http://localhost:4500"
+    "urlAPI": "https://back-avl-car.onrender.com",
+    "urlSOCKET": "https://back-avl-car.onrender.com"
 }
